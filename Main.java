@@ -107,6 +107,7 @@ public class Main {
                 } else {
                     logIn.setFriendsOnly(false);
                 }
+                MediaDatabase.alterAccount(logIn.getName(), logIn);
                 continue;
             }
 
@@ -132,6 +133,8 @@ public class Main {
                         System.out.println("System error failure");
                         continue;
                     }
+                    MediaDatabase.alterAccount(logIn.getName(), logIn);
+                    continue;
 
                 } catch (BadDataException e) {
                     System.out.println("No account exists by that name");
@@ -147,6 +150,7 @@ public class Main {
                     if (removeFriend.equals(friends.get(i).getName())) {
                         logIn.removeFriend(friends.get(i));
                         System.out.println("done");
+                        MediaDatabase.alterAccount(logIn.getName(), logIn);
                     }
                 }
                 continue;
@@ -174,6 +178,8 @@ public class Main {
                         System.out.println("System error failure");
                         continue;
                     }
+                    MediaDatabase.alterAccount(logIn.getName(), logIn);
+                    continue;
 
                 } catch (BadDataException e) {
                     System.out.println("No account exists by that name");
@@ -189,6 +195,7 @@ public class Main {
                     if (removeBlocked.equals(blocked.get(i).getName())) {
                         logIn.removeBlocked(blocked.get(i));
                         System.out.println("done");
+                        MediaDatabase.alterAccount(logIn.getName(), logIn);
                     }
                 }
                 continue;
@@ -221,6 +228,7 @@ public class Main {
                         try {
                             MediaDatabase.createDirectMessage(logIn, dmStartTarget);
                             System.out.println("DM has been created!");
+                            MediaDatabase.outputDirectMessagesNames();              //updates save file
                             continue;
                         } catch (InvalidTargetException e) {
                             System.out.println("You cannot send to this person OR a DM with them already exists.");
@@ -345,6 +353,8 @@ public class Main {
 
             if (menu == 7) {
                 System.out.println("Bye");
+                MediaDatabase.outputAccountsSave();
+                MediaDatabase.outputDirectMessagesNames();
                 break;
             }
         }
