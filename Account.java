@@ -65,6 +65,9 @@ public class Account implements AccountInterface {
 
     public boolean addFriend(Account friend) {
         if (!blocked.contains(friend)) {
+            if (blocked.remove(friend)) {
+                friend.removeBlocked(this);
+            }
             return friends.add(friend);
         }
         return false;
@@ -84,6 +87,9 @@ public class Account implements AccountInterface {
 
     public boolean addBlocked(Account blocked) {
         if (!friends.contains(blocked)) {
+            if (friends.remove(blocked)) {
+                blocked.removeFriend(this);
+            }
             return this.blocked.add(blocked);
         }
         return false;
@@ -99,15 +105,21 @@ public class Account implements AccountInterface {
 
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(name).append(",").append(password).append(":");
+        stringBuilder.append(name).append(",").append(password).append(",").append(friendsOnly).append(":");
 
-        for (Account friend : friends) {
-            stringBuilder.append(friend.getName()).append(",");
+        for (int i = 0; i < friends.size(); i++) {
+            stringBuilder.append(friends.get(i).getName());
+            if (i < friends.size() - 1) {
+                stringBuilder.append(",");
+            }
         }
         stringBuilder.append(":");
 
-        for (Account blocked : blocked) {
-            stringBuilder.append(blocked.getName()).append(",");
+        for (int i = 0; i < blocked.size(); i++) {
+            stringBuilder.append(blocked.get(i).getName());
+            if (i < blocked.size() - 1) {
+                stringBuilder.append(",");
+            }
         }
         return stringBuilder.toString();
     }
