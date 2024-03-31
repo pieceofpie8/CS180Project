@@ -8,8 +8,8 @@ public class Main {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Welcome");
-        new MediaDatabase("accountsSave.txt", "directMessageFileNames.txt");
-        Account logIn;
+        MediaDatabase mediaDatabase = new MediaDatabase("accountsSave.txt", "directMessageFileNames.txt");
+        Account logIn = null;
 
         while (true) {
             System.out.println("Would you like to log in (1) or create an account (2)?");
@@ -37,9 +37,9 @@ public class Main {
                         System.out.println("Invalid selection, no ':' or ','");
                         continue;
                     } else {
-                        logIn;
+
                         try {
-                            logIn = MediaDatabase.logIntoAccount(username, password);
+                            logIn = mediaDatabase.logIntoAccount(username, password);
                         } catch (BadDataException e) {
                             System.out.println("Username or password is wrong.");
                             continue;
@@ -63,13 +63,13 @@ public class Main {
                         continue;
                     } else {
                         try {
-                            Account existant = MediaDatabase.findAccount(newUsername);
+                            Account existant = mediaDatabase.findAccount(newUsername);
                             System.out.println("Username is taken.");
                             continue;
                         } catch (BadDataException e) {
                             String logInAccountData = newUsername + "," + newPassword + "," + freindsOnly + "::";
                             logIn = new Account(logInAccountData);
-                            MediaDatabase.addAccount(logInAccountData);
+                            mediaDatabase.addAccount(logInAccountData);
                         }
                     }
                 }
@@ -79,7 +79,7 @@ public class Main {
         }
 
         while (true) {              //post log-in
-            System.out.println("What would you like to do?\n(1) Change FriendsOnly\n(2)Add a friend" +
+            System.out.println("What would you like to do?\n(1)Change FriendsOnly\n(2)Add a friend" +
                     "\n(3)Remove a friend\n(4)Add blocked\n(5)Remove blocked\n(6)Access a DM\n(7)exit");
             String menuString = scan.nextLine();
             int menu = 0;
@@ -107,7 +107,7 @@ public class Main {
                 } else {
                     logIn.setFriendsOnly(false);
                 }
-                MediaDatabase.alterAccount(logIn.getName(), logIn);
+                mediaDatabase.alterAccount(logIn.getName(), logIn);
                 continue;
             }
 
@@ -127,13 +127,13 @@ public class Main {
                 }
 
                 try {
-                    Account addFriend = MediaDatabase.findAccount(newFriend);
+                    Account addFriend = mediaDatabase.findAccount(newFriend);
                     boolean result = logIn.addFriend(addFriend);
                     if (!result) {
                         System.out.println("System error failure");
                         continue;
                     }
-                    MediaDatabase.alterAccount(logIn.getName(), logIn);
+                    mediaDatabase.alterAccount(logIn.getName(), logIn);
                     continue;
 
                 } catch (BadDataException e) {
@@ -150,7 +150,7 @@ public class Main {
                     if (removeFriend.equals(friends.get(i).getName())) {
                         logIn.removeFriend(friends.get(i));
                         System.out.println("done");
-                        MediaDatabase.alterAccount(logIn.getName(), logIn);
+                        mediaDatabase.alterAccount(logIn.getName(), logIn);
                     }
                 }
                 continue;
@@ -172,13 +172,13 @@ public class Main {
                 }
 
                 try {
-                    Account addBlocked = MediaDatabase.findAccount(newBlocked);
+                    Account addBlocked = mediaDatabase.findAccount(newBlocked);
                     boolean result = logIn.addBlocked(addBlocked);
                     if (!result) {
                         System.out.println("System error failure");
                         continue;
                     }
-                    MediaDatabase.alterAccount(logIn.getName(), logIn);
+                    mediaDatabase.alterAccount(logIn.getName(), logIn);
                     continue;
 
                 } catch (BadDataException e) {
@@ -195,7 +195,7 @@ public class Main {
                     if (removeBlocked.equals(blocked.get(i).getName())) {
                         logIn.removeBlocked(blocked.get(i));
                         System.out.println("done");
-                        MediaDatabase.alterAccount(logIn.getName(), logIn);
+                        mediaDatabase.alterAccount(logIn.getName(), logIn);
                     }
                 }
                 continue;
@@ -223,12 +223,12 @@ public class Main {
                     System.out.println("Who are you starting a DM with?");
                     String dmStartTargetName = scan.nextLine();
                     try {
-                        Account dmStartTarget = MediaDatabase.findAccount(dmStartTargetName);
+                        Account dmStartTarget = mediaDatabase.findAccount(dmStartTargetName);
 
                         try {
-                            MediaDatabase.createDirectMessage(logIn, dmStartTarget);
+                            mediaDatabase.createDirectMessage(logIn, dmStartTarget);
                             System.out.println("DM has been created!");
-                            MediaDatabase.outputDirectMessagesNames();              //updates save file
+                            mediaDatabase.outputDirectMessagesNames();              //updates save file
                             continue;
                         } catch (InvalidTargetException e) {
                             System.out.println("You cannot send to this person OR a DM with them already exists.");
@@ -245,7 +245,7 @@ public class Main {
                     System.out.println("Who are you reading DMs with?");
                     String dmReadTargetName = scan.nextLine();
                     try {
-                        Account dmReadTarget = MediaDatabase.findAccount(dmReadTargetName);
+                        Account dmReadTarget = mediaDatabase.findAccount(dmReadTargetName);
 
                         ArrayList<String> namesForFileName = new ArrayList<>();
                         namesForFileName.add(logIn.getName());
@@ -253,7 +253,7 @@ public class Main {
                         namesForFileName.sort(Comparator.naturalOrder());
                         String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1);
 
-                        ArrayList<String> messages = MediaDatabase.readDirectMessages(fileName);
+                        ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
                         for (int i = 0; i < messages.size(); i++) {
                             System.out.println(messages.get(i));
                         }
@@ -269,7 +269,7 @@ public class Main {
                     System.out.println("Who are you sending a DM to?");
                     String dmSendTargetName = scan.nextLine();
                     try {
-                        Account dmSendTarget = MediaDatabase.findAccount(dmSendTargetName);
+                        Account dmSendTarget = mediaDatabase.findAccount(dmSendTargetName);
 
                         ArrayList<String> namesForFileName = new ArrayList<>();
                         namesForFileName.add(logIn.getName());
@@ -277,19 +277,19 @@ public class Main {
                         namesForFileName.sort(Comparator.naturalOrder());
                         String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1);
 
-                        ArrayList<String> messages = MediaDatabase.readDirectMessages(fileName);
+                        ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
                         System.out.println("Enter Message:");
                         String message = scan.nextLine();
 
                         ArrayList<String> newMessages;
                         try {
-                            newMessages = MediaDatabase.addMessage(messages, logIn, dmSendTarget, message);
+                            newMessages = mediaDatabase.addMessage(messages, logIn, dmSendTarget, message);
                         } catch (InvalidTargetException e) {
                             System.out.println("You cannot send a message to this person!");
                             continue;
                         }
 
-                        boolean result = MediaDatabase.outputDirectMessages(newMessages, fileName);
+                        boolean result = mediaDatabase.outputDirectMessages(newMessages, fileName);
                         if (!result) {
                             System.out.println("System error");
                         } else {
@@ -307,7 +307,7 @@ public class Main {
                     System.out.println("Who are you removing a DM to?");
                     String dmRemoveTargetName = scan.nextLine();
                     try {
-                        Account dmRemoveTarget = MediaDatabase.findAccount(dmRemoveTargetName);
+                        Account dmRemoveTarget = mediaDatabase.findAccount(dmRemoveTargetName);
 
                         ArrayList<String> namesForFileName = new ArrayList<>();
                         namesForFileName.add(logIn.getName());
@@ -315,7 +315,7 @@ public class Main {
                         namesForFileName.sort(Comparator.naturalOrder());
                         String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1);
 
-                        ArrayList<String> messages = MediaDatabase.readDirectMessages(fileName);
+                        ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
                         System.out.println("Enter Index of Message to remove:");
                         String indexString = scan.nextLine();
                         int index = 0;
@@ -328,13 +328,13 @@ public class Main {
 
                         ArrayList<String> newMessages;
                         try {
-                            newMessages = MediaDatabase.removeMessage(messages, logIn, index);
+                            newMessages = mediaDatabase.removeMessage(messages, logIn, dmRemoveTarget, index);
                         } catch (InvalidTargetException e) {
                             System.out.println("You cannot delete this message");
                             continue;
                         }
 
-                        boolean result = MediaDatabase.outputDirectMessages(newMessages, fileName);
+                        boolean result = mediaDatabase.outputDirectMessages(newMessages, fileName);
                         if (!result) {
                             System.out.println("System error");
                         } else {
@@ -353,8 +353,8 @@ public class Main {
 
             if (menu == 7) {
                 System.out.println("Bye");
-                MediaDatabase.outputAccountsSave();
-                MediaDatabase.outputDirectMessagesNames();
+                mediaDatabase.outputAccountsSave();
+                mediaDatabase.outputDirectMessagesNames();
                 break;
             }
         }

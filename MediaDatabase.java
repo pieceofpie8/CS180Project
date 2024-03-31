@@ -26,18 +26,47 @@ public class MediaDatabase implements MediaDatabaseInterface {
             BufferedReader accountsReader = new BufferedReader(new FileReader(accountsSaveFile));
             String line;
             while ((line = accountsReader.readLine()) != null) {
-                String[] parts = line.split(":");
-                String usernameAndPassword = parts[0];
-                String[] friendsAndBlocked = Arrays.copyOfRange(parts, 1, parts.length);
-                Account account = new Account(usernameAndPassword);
-                account.setFriendsAndBlocked(new ArrayList<>(Arrays.asList(friendsAndBlocked)));
+                Account account = new Account(line);
                 accounts.add(account);
             }
             accountsReader.close();
+
+            for (int i = 0; i < accounts.size(); i++) {
+                BufferedReader accountsReader2 = new BufferedReader(new FileReader(accountsSaveFile));
+                String line2;
+                while ((line2 = accountsReader2.readLine()) != null) {
+
+                    String[] parts = line2.split(":", 3);
+                    String[] friendNames = parts[1].split(",");
+                    String[] blockedNames = parts[2].split(",");
+                    ArrayList<Account> friends = new ArrayList<>();
+                    ArrayList<Account> blocked = new ArrayList<>();
+
+                    if (!friendNames[0].isEmpty()) {
+                        for (int j = 0; j < friendNames.length; j++) {
+                            friends.add(findAccount(friendNames[j]));
+                        }
+                    }
+                    if (!blockedNames[0].isEmpty()) {
+                        for (int j = 0; j < blockedNames.length; j++) {
+                            blocked.add(findAccount(blockedNames[j]));
+                        }
+                    }
+
+                    Account finishedAccount = new Account(line2, friends, blocked);
+                    alterAccount(finishedAccount.getName(), finishedAccount);
+                }
+                accountsReader2.close();
+                accountsReader2 = null;
+            }
+
             return true;
         } catch (IOException e) {
             System.err.println("Error reading accounts file: " + e.getMessage());
             return false;
+        } catch (BadDataException e) {
+            System.out.print("Theoretically impossible scenerio");
+            throw new RuntimeException(e);
         }
     }
 
@@ -120,6 +149,9 @@ public class MediaDatabase implements MediaDatabaseInterface {
             if (target.getFriendsOnly() && !target.getFriends().contains(sender)) {
                 throw new InvalidTargetException("Target accepts messages from friends only.");
             }
+            if (target.getBlocked().contains(sender)) {
+                throw new InvalidTargetException("Target has you blocked");
+            }
 
             int index = messages.size() + 1;
             messages.add("(" + index + ") " + sender.getName() + ": " + message);
@@ -135,11 +167,22 @@ public class MediaDatabase implements MediaDatabaseInterface {
     }
 
 
-    public ArrayList<String> removeMessage(Account remover, int index) {
+    public ArrayList<String> removeMessage(ArrayList<String> messages, Account remover, Account other, int index) throws InvalidTargetException {
         try {
-            ArrayList<String> messages = readDirectMessages(getDirectMessageFileName(remover, remover));
+            int startName = messages.get(index).indexOf(")") + 2;
+            int endName = messages.get(index).indexOf(":");
+            if (!messages.get(index).substring(startName, endName).equals(remover.getName())) {
+                throw new InvalidTargetException("That isn't your message!");
+            }
+
             messages.remove(index);
-            outputDirectMessages(messages, getDirectMessageFileName(remover, remover));
+            for (int i = 0; i < messages.size(); i++) {
+                int indexEnd = messages.get(i).indexOf(")") + 2;
+                String replacer = "(" + i + ") " + messages.get(i).substring(indexEnd);
+                messages.set(i, replacer);
+            }
+
+            outputDirectMessages(messages, getDirectMessageFileName(remover, other));
             return messages;
         } catch (IndexOutOfBoundsException e) {
             System.err.println("Error removing message: " + e.getMessage());
@@ -150,6 +193,10 @@ public class MediaDatabase implements MediaDatabaseInterface {
     public String createDirectMessage(Account sender, Account target) throws InvalidTargetException {
         try {
             String fileName = getDirectMessageFileName(sender, target);
+            if (directMessageFiles.contains(fileName)) {
+                throw new InvalidTargetException("DMs with this person already exist!");
+            }
+
             FileWriter writer = new FileWriter(fileName);
             writer.write("(0) Direct Messages Started!\n"); // Write the first line
             writer.close();
@@ -197,7 +244,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
     private String getDirectMessageFileName(Account user1, Account user2) {
         ArrayList<String> names = new ArrayList<>(Arrays.asList(user1.getName(), user2.getName()));
         Collections.sort(names);
-        return names.get(0) + ":" + names.get(1) + ".txt";
+        return names.get(0) + "," + names.get(1) + ".txt";
     }
     public void alterAccount(String accountName, Account replace) {
         for (int i = 0; i < accounts.size(); i++) {

@@ -10,25 +10,22 @@ public class Account implements AccountInterface {
     public Account(String data) {
         String[] parts = data.split(":");
         String[] info = parts[0].split(",");
+
+        this.name = info[0];
+        this.password = info[1];
+        this.friendsOnly = Boolean.parseBoolean(info[2]);
+    }
+
+    public Account(String data, ArrayList<Account> friends, ArrayList<Account> blocked) {
+        String[] parts = data.split(":");
+        String[] info = parts[0].split(",");
+
         this.name = info[0];
         this.password = info[1];
         this.friendsOnly = Boolean.parseBoolean(info[2]);
 
-        String[] friendNames = parts[1].split(",");
-        this.friends = new ArrayList<>();
-        for (String friendName : friendNames) {
-            if (!friendName.isEmpty()) {
-                this.friends.add(new Account(friendName));
-            }
-        }
-
-        String[] blockedNames = parts[2].split(",");
-        this.blocked = new ArrayList<>();
-        for (String blockedName : blockedNames) {
-            if (!blockedName.isEmpty()) {
-                this.blocked.add(new Account(blockedName));
-            }
-        }
+        this.friends = friends;
+        this.blocked = blocked;
     }
 
     public String getName() {
