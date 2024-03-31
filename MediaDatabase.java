@@ -55,53 +55,141 @@ public class MediaDatabase implements MediaDatabaseInterface {
         }
     }
 
-    public ArrayList<String> readDirectMessagesNames(String messageNamesData) {
-        // Implement
-        return null;
+    public ArrayList<String> readDirectMessagesNames() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(directMessageFileNamesFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                directMessageFiles.add(line);
+            }
+            reader.close();
+            return directMessageFiles;
+        } catch (IOException e) {
+            System.err.println("Error reading direct message file names: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     public boolean outputDirectMessagesNames(ArrayList<String> directMessageFiles) {
-        // Implement
-        return false;
+        try {
+            FileWriter writer = new FileWriter(directMessageFileNamesFile);
+            for (String fileName : directMessageFiles) {
+                writer.write(fileName + "\n");
+            }
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error writing direct message file names: " + e.getMessage());
+            return false;
+        }
     }
 
     public ArrayList<String> readDirectMessages(String filename) {
-        // Implement
-        return null;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            ArrayList<String> messages = new ArrayList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                messages.add(line);
+            }
+            reader.close();
+            return messages;
+        } catch (IOException e) {
+            System.err.println("Error reading direct messages from file: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
-    public boolean outputDirectMessages(ArrayList<String> messagesData) {
-        // Implement
-        return false;
+    public boolean outputDirectMessages(ArrayList<String> messagesData, String filename) {
+        try {
+            FileWriter writer = new FileWriter(filename);
+            for (String message : messagesData) {
+                writer.write(message + "\n");
+            }
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error writing direct messages to file: " + e.getMessage());
+            return false;
+        }
     }
 
-    public ArrayList<String> addMessage(Account sender, String message) {
-        // Implement
-        return null;
+    public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message) {
+        try {
+            if (sender.getBlocked().contains(target) || target.getBlocked().contains(sender)) {
+                throw new InvalidTargetException("Sender or target is blocked");
+            }
+            
+            messages.add(sender.getName() + ": " + message);
+            
+            String filename = getDirectMessageFileName(sender, target);
+            outputDirectMessages(messages, filename);
+            
+            return messages;
+        } catch (Exception e) {
+            System.err.println("Error adding message: " + e.getMessage());
+            return null;
+        }
     }
+
 
     public ArrayList<String> removeMessage(Account remover, int index) {
-        // Implement
-        return null;
+        try {
+            ArrayList<String> messages = readDirectMessages(getDirectMessageFileName(remover, remover));
+            messages.remove(index);
+            outputDirectMessages(messages, getDirectMessageFileName(remover, remover));
+            return messages;
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Error removing message: " + e.getMessage());
+            return null;
+        }
     }
 
     public String createDirectMessage(Account sender, Account target) {
-        // Implement
-        return null;
+        try {
+            String fileName = getDirectMessageFileName(sender, target);
+            FileWriter writer = new FileWriter(fileName);
+            writer.close();
+            return fileName;
+        } catch (IOException e) {
+            System.err.println("Error creating direct message file: " + e.getMessage());
+            return null;
+        }
     }
 
     public boolean addAccount(String accountData) {
-        // Implement
-        return false;
+        try {
+            FileWriter writer = new FileWriter(accountsSaveFile, true);
+            writer.write(accountData + "\n");
+            writer.close();
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error adding account: " + e.getMessage());
+            return false;
+        }
     }
 
     public Account logIntoAccount(String name, String password) {
-        // Implement
+        for (Account account : accounts) {
+            if (account.getName().equals(name) && account.getPassword().equals(password)) {
+                return account;
+            }
+        }
         return null;
     }
 
     public Account findAccount(String name) {
-        // Implement
+        for (Account account : accounts) {
+            if (account.getName().equals(name)) {
+                return account;
+            }
+        }
         return null;
+    }
+
+    private String getDirectMessageFileName(Account user1, Account user2) {
+        ArrayList<String> names = new ArrayList<>(Arrays.asList(user1.getName(), user2.getName()));
+        Collections.sort(names);
+        return names.get(0) + "_" + names.get(1) + ".txt";
     }
 }
