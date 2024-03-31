@@ -68,3 +68,52 @@ I’m mostly basing the structure of this off of the Project 3 database. This is
 ## Exceptions
 - **BadDataException**: For invalid names, passwords, or unable to find accounts.
 - **InvalidTargetException**: For inability to send a direct message to the target account.
+
+
+
+README:
+
+Compile and Run:
+To compile the project, run the following in the terminal:
+ 	javac AccountInterface.java
+	javac Account.java
+	javac MediaDatabaseInterface.java
+	javac MediaDatabase.java
+	javac BadDataExcpetion.java
+javac InvalidTargetException.java
+	
+javac InterfacesTestMain.java
+javac InterfacesTestCase.java
+javac ____ (fill in with main and other test case).
+
+To run, type: “java Main” into the terminal.
+
+Submission:
+David Erb - Submitted Vocareum workspace
+
+Classes:
+AccountInterface:
+	AccountInterface is an interface for the Account class that details the methods to be used in the class. These methods are: Get / set name, Get / set password, Get / set friends, Get / set friendsOnly, Add friend, Remove friend, Get / set blocked, Add blocked, Remove blocked, equals, toString. Testing was done using the InterfacesTestMain and InterfacesTestCase classes to ensure Account correctly implements AccountInterface.
+
+Account:
+	Account is a class that defines the Account object as an account for the social media program for use in the database. It has all the capabilities of the methods in its interface and includes the fields: String name, String password, Arraylist of friended Accounts, Arraylist of blocked Accounts, and boolean “friendsOnly” (specifying who can send messages to this person). The methods are meant for altering and defining all the aspects of an account. Testing was done using the _____
+
+MediaDatabaseInterface:
+	MediaDatabaseInterface is an interface for the MediaDatabase class that details the methods to be used in the class. These methods are: addAccount, readAccountsSave, outputAccountsSave, logIntoAccount, findAccount, readDirectMessagesNames, outputDirectMessagesNames, readDirectMessages, outputDirectMessages, addMessage, removeMessage, and createDirectMessage. Testing was done using the InterfacesTestMain and InterfacesTestCase classes to ensure Account correctly implements AccountInterface.
+
+MediaDatabase:
+	MediaDatabase is a class that defines the storage and use of information in the social media program. It has all the capabilities of the methods in its interface with the purpose of reading, saving files, and altering files for the primary purpose of allowing direct messages to be exchanged between two accounts. Its fields are an ArrayList Accounts for all existing accounts, String accountsSaveFile for the name of the file containing account information, String DirectMessagesNames for the name of the file containing existing direct message file names, and ArrayList<String> directMessageFiles for all the existing direct message files. Testing was done using the _____
+
+
+BadDataExcpetion:
+	BadDataExcpetion is just an extension of Exception with the purpose of helping organize the project to know why exceptions are being made. BadDataExcpetion is meant for use when data does not follow the guidelines of the program (invalid character in name or password, etc.).
+
+InvalidTargetException:
+		InvalidTargetException is just an extension of Exception with the purpose of helping organize the project to know why exceptions are being made. InvalidTargetException is meant for use when one account tries to send a message to an account they are not allowed to (blocked or not friended).
+
+
+InterfacesTestMain and InterfacesTestCase:
+	These two classes go hand in hand with the purpose of testing if the interfaces of the class are implemented properly. The InterfacesTestMain class defines a main method that prints certain Strings depending on if the interfaces are correctly implemented. InterfacesTestCase uses InterfacesTestMain in a simple input/output test case to ensure that the correct string result is printed, indicating successful implementation.
+
+Main:
+	This class contains the main method used to run the program as a social media. It prompts to login or create an account and then allows the user to ___
