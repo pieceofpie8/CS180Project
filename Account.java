@@ -64,13 +64,13 @@ public class Account implements AccountInterface {
     }
 
     public boolean addFriend(Account friend) {
-        if (!blocked.contains(friend)) {
-            if (blocked.remove(friend)) {
-                friend.removeBlocked(this);
-            }
-            return friends.add(friend);
+        if (friends.contains(friend)) {
+            return true;
         }
-        return false;
+        if (blocked.contains(friend)) {
+            removeBlocked(friend);
+        }
+        return friends.add(friend);
     }
 
     public boolean removeFriend(Account friend) {
@@ -86,13 +86,13 @@ public class Account implements AccountInterface {
     }
 
     public boolean addBlocked(Account blocked) {
-        if (!friends.contains(blocked)) {
-            if (friends.remove(blocked)) {
-                blocked.removeFriend(this);
-            }
-            return this.blocked.add(blocked);
+        if (this.blocked.contains(blocked)) {
+            return true;
         }
-        return false;
+        if (this.friends.contains(blocked)) {
+            removeFriend(blocked);
+        }
+        return this.blocked.add(blocked);
     }
 
     public boolean removeBlocked(Account blocked) {
