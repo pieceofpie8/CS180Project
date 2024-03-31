@@ -153,7 +153,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
                 throw new InvalidTargetException("Target has you blocked");
             }
 
-            int index = messages.size() + 1;
+            int index = messages.size();
             messages.add("(" + index + ") " + sender.getName() + ": " + message);
 
             String filename = getDirectMessageFileName(sender, target);

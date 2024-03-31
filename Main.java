@@ -251,7 +251,7 @@ public class Main {
                         namesForFileName.add(logIn.getName());
                         namesForFileName.add(dmReadTargetName);
                         namesForFileName.sort(Comparator.naturalOrder());
-                        String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1);
+                        String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1) + ".txt";
 
                         ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
                         for (int i = 0; i < messages.size(); i++) {
@@ -275,7 +275,7 @@ public class Main {
                         namesForFileName.add(logIn.getName());
                         namesForFileName.add(dmSendTargetName);
                         namesForFileName.sort(Comparator.naturalOrder());
-                        String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1);
+                        String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1) + ".txt";
 
                         ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
                         System.out.println("Enter Message:");
@@ -313,7 +313,7 @@ public class Main {
                         namesForFileName.add(logIn.getName());
                         namesForFileName.add(dmRemoveTargetName);
                         namesForFileName.sort(Comparator.naturalOrder());
-                        String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1);
+                        String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1) + ".txt";
 
                         ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
                         System.out.println("Enter Index of Message to remove:");
