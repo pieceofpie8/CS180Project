@@ -116,17 +116,21 @@ public class MediaDatabase implements MediaDatabaseInterface {
 
     public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message) {
         try {
-            if (sender.getBlocked().contains(target) || target.getBlocked().contains(sender)) {
-                throw new InvalidTargetException("Sender or target is blocked");
+            if (target.getFriendsOnly() && !target.getFriends().contains(sender)) {
+                throw new InvalidTargetException("Target accepts messages from friends only.");
             }
             
-            messages.add(sender.getName() + ": " + message);
+            int index = messages.size() + 1;
+            messages.add("(" + index + ") " + sender.getName() + ": " + message);
             
             String filename = getDirectMessageFileName(sender, target);
             outputDirectMessages(messages, filename);
             
             return messages;
-        } catch (Exception e) {
+        } catch (IOException e) {
+            System.err.println("Error adding message: " + e.getMessage());
+            return null;
+        } catch (InvalidTargetException e) {
             System.err.println("Error adding message: " + e.getMessage());
             return null;
         }
@@ -149,6 +153,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
         try {
             String fileName = getDirectMessageFileName(sender, target);
             FileWriter writer = new FileWriter(fileName);
+            writer.write("(0) Direct Messages Started!\n"); // Write the first line
             writer.close();
             return fileName;
         } catch (IOException e) {
@@ -162,6 +167,10 @@ public class MediaDatabase implements MediaDatabaseInterface {
             FileWriter writer = new FileWriter(accountsSaveFile, true);
             writer.write(accountData + "\n");
             writer.close();
+            
+            Account newAccount = new Account(accountData);
+            accounts.add(newAccount);
+            
             return true;
         } catch (IOException e) {
             System.err.println("Error adding account: " + e.getMessage());
@@ -169,27 +178,36 @@ public class MediaDatabase implements MediaDatabaseInterface {
         }
     }
 
-    public Account logIntoAccount(String name, String password) {
+    public Account logIntoAccount(String name, String password) throws BadDataException {
         for (Account account : accounts) {
             if (account.getName().equals(name) && account.getPassword().equals(password)) {
                 return account;
             }
         }
-        return null;
+        throw new BadDataException("Username or password is wrong.");
     }
 
-    public Account findAccount(String name) {
+    public Account findAccount(String name) throws BadDataException {
         for (Account account : accounts) {
             if (account.getName().equals(name)) {
                 return account;
             }
         }
-        return null;
+        throw new BadDataException("No account exists by that name.");
     }
 
     private String getDirectMessageFileName(Account user1, Account user2) {
         ArrayList<String> names = new ArrayList<>(Arrays.asList(user1.getName(), user2.getName()));
         Collections.sort(names);
-        return names.get(0) + "_" + names.get(1) + ".txt";
+        return names.get(0) + ":" + names.get(1) + ".txt";
+    }
+    public void alterAccount(String accountName, Account replace) {
+        for (int i = 0; i < accounts.size(); i++) {
+            if (accounts.get(i).getName().equals(accountName)) {
+                accounts.set(i, replace);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Account with name " + accountName + " not found.");
     }
 }
