@@ -70,7 +70,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
         }
     }
 
-    public boolean outputDirectMessagesNames(ArrayList<String> directMessageFiles) {
+    public boolean outputDirectMessagesNames() {
         try {
             FileWriter writer = new FileWriter(directMessageFileNamesFile);
             for (String fileName : directMessageFiles) {
@@ -114,22 +114,20 @@ public class MediaDatabase implements MediaDatabaseInterface {
         }
     }
 
-    public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message) {
+    public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message)
+    throws InvalidTargetException {
         try {
             if (target.getFriendsOnly() && !target.getFriends().contains(sender)) {
                 throw new InvalidTargetException("Target accepts messages from friends only.");
             }
-            
+
             int index = messages.size() + 1;
             messages.add("(" + index + ") " + sender.getName() + ": " + message);
-            
+
             String filename = getDirectMessageFileName(sender, target);
             outputDirectMessages(messages, filename);
-            
+
             return messages;
-        } catch (IOException e) {
-            System.err.println("Error adding message: " + e.getMessage());
-            return null;
         } catch (InvalidTargetException e) {
             System.err.println("Error adding message: " + e.getMessage());
             return null;
@@ -149,7 +147,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
         }
     }
 
-    public String createDirectMessage(Account sender, Account target) {
+    public String createDirectMessage(Account sender, Account target) throws InvalidTargetException {
         try {
             String fileName = getDirectMessageFileName(sender, target);
             FileWriter writer = new FileWriter(fileName);
@@ -167,10 +165,10 @@ public class MediaDatabase implements MediaDatabaseInterface {
             FileWriter writer = new FileWriter(accountsSaveFile, true);
             writer.write(accountData + "\n");
             writer.close();
-            
+
             Account newAccount = new Account(accountData);
             accounts.add(newAccount);
-            
+
             return true;
         } catch (IOException e) {
             System.err.println("Error adding account: " + e.getMessage());
