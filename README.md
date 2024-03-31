@@ -75,7 +75,7 @@ README:
 
 Compile and Run:
 To compile the project, run the following in the terminal:
- 	javac AccountInterface.java
+	javac AccountInterface.java
 	javac Account.java
 	javac MediaDatabaseInterface.java
 	javac MediaDatabase.java
