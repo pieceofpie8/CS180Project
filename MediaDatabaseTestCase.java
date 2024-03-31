@@ -72,6 +72,17 @@ public class MediaDatabaseTestCase {
             assertEquals(true, media.outputAccountsSave());
         }
 
+        @Test public void testReadDirectMessagesNames() {
+            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            ArrayList<String> test = new ArrayList();
+            ArrayList<String> messageNames = new ArrayList();
+            test = media.readDirectMessagesNames();
+            assertNotNull(test);
+            messageNames.add("Alice:John");
+            messageNames.add("Amy:Rand");
+            assertEquals(messageNames, test);
+        }
+
 
         // Will complete rest as the class is implemented.
     }
