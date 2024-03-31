@@ -13,9 +13,9 @@ public interface MediaDatabaseInterface {
     public boolean outputDirectMessagesNames(ArrayList<String> directMessageFiles);
 
     public ArrayList<String> readDirectMessages(String filename);
-    public boolean outputDirectMessages(ArrayList<String> messagesData);
-    public ArrayList<String> addMessage(Account sender, String message);    //throw InvalidTargetException if the sender cannot send to the target (blocked, etc.). Adds new String index at the end of the ArrayList in the format of the Direct Message File (including index number).
-    public ArrayList<String> removeMessage(Account remover, int index);     //removes the message at the given index if it was sent by the account removing it. Remakes all subsequent indexes the same but with one less in the "(#)". Returns the remade ArrayList.
+    public boolean outputDirectMessages(ArrayList<String> messagesData, String fileName);
+    public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message);    //throw InvalidTargetException if the sender cannot send to the target (blocked, etc.). Adds new String index at the end of the ArrayList in the format of the Direct Message File (including index number).
+    public ArrayList<String> removeMessage(ArrayList<String> messages, Account remover, int index);     //removes the message at the given index if it was sent by the account removing it. Remakes all subsequent indexes the same but with one less in the "(#)". Returns the remade ArrayList. Throw invalid target if the message was not sent by the deleter.
     public String createDirectMessage(Account sender, Account target);      //throw InvalidTargetException if the sender cannot send to the target (blocked, etc.) OR if the direct message already exists (check for filename)
                                                                             // Otherwise, write "(0) Direct Messages Started!\n" to a new file with a name made by the two Accounts. Add the filename to ArrayList<String> directMessageFiles. Return the filename.
 }
