@@ -60,10 +60,10 @@ public class MediaDatabaseTestCase {
             assertEquals(true, media.readAccountsSave());
             assertNotNull(accounts);
             ArrayList<Account> testAccounts =  new ArrayList<Account>();
-            Account friend1 = new Account("John,Password123:Alice:Rand");
-            Account friend2 = new Account("Alice,newPassword8:John,Amy:");
-            Account friend3 = new Account("Rand,somethingHere:Amy,Tom:");
-            Account friend4 = new Account("Amy,outOfIdeas:Alice,Rand:Tom,John");
+            Account friend1 = new Account("John,Password123,true:Alice:Rand");
+            Account friend2 = new Account("Alice,newPassword8,true:John,Amy:");
+            Account friend3 = new Account("Rand,somethingHere,true:Amy,Tom:");
+            Account friend4 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             testAccounts.add(friend1);
             testAccounts.add(friend2);
             testAccounts.add(friend3);
@@ -72,13 +72,13 @@ public class MediaDatabaseTestCase {
         }
 
         @Test public void testOutputAccountsSave() {
-            MediaDatabase media = new MediaDatabase("inoutAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
             assertEquals(true, media.outputAccountsSave());
             ArrayList<String> actual = new ArrayList<>();
-            actual.add("John,Password123:Alice:Rand");
-            actual.add("Alice,newPassword8:John,Amy:");
-            actual.add("Rand,somethingHere:Amy,Tom:");
-            actual.add("Amy,outOfIdeas:Alice,Rand:Tom,John");
+            actual.add("John,Password123,true:Alice:Rand");
+            actual.add("Alice,newPassword8,true:John,Amy:");
+            actual.add("Rand,somethingHere,true:Amy,Tom:");
+            actual.add("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             ArrayList<String> written = new ArrayList<>();
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(accountsSaveFile));
