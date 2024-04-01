@@ -66,6 +66,22 @@ public class AccountTestCase {
             ArrayList<Account> testBlocked = new ArrayList<>();
             testBlocked.add(block1);
             assertEquals(testBlocked, blocked);
+
+            ArrayList<Account> friendly = new ArrayList<Account>();
+            friendly.add(friend1);
+            friendly.add(friend2);
+            ArrayList<Account> blocker = new ArrayList<Account>();
+            blocker.add(block1);
+
+            Account tester = new Account("John,Password123,true:Alice,Rand:Amy", friendly, blocker);
+
+            assertNotNull(friends);
+            assertNotNull(blocked);
+            assertNotNull(password);
+            assertEquals(true, friendsOnly);
+
+            assertEquals(friendly, friends);
+            assertEquals(blocker, blocked);
         }
 
         @Test public void testAddFriend() {
