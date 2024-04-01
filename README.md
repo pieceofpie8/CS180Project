@@ -53,3 +53,5 @@ AccountTestCase:
 
 MediaDatabaseTestCase:
 	This class tests the MediaDatabase class, and verifies that each method is working as intended. Each method creates new Account objects and runs the MediaDatabase methods, to ensure that the MediaDatabase methods are running properly, and giving the expected output. This class contains a static class named TestCase, which is used to test the MediaDatabase class. MediaDatabaseTestCase imports Junit, which it uses to test the class and make sure that each method is running correctly. 
+
+All added ".txt" files exist for the purpose of testing and examples.
