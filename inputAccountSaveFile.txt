@@ -1,4 +1,4 @@
-John,Password123:Alice:Rand
-Alice,newPassword8:John,Amy:
-Rand,somethingHere:Amy,Tom:
-Amy,outOfIdeas:Alice,Rand:Tom,John
+John,Password123,true:Alice:Rand
+Alice,newPassword8,true:John,Amy:
+Rand,somethingHere,true:Amy,Tom:
+Amy,outOfIdeas,true:Alice,Rand:Tom,John
