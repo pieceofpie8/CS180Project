@@ -104,18 +104,22 @@ public class Account implements AccountInterface {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(name).append(",").append(password).append(",").append(friendsOnly).append(":");
 
-        for (int i = 0; i < friends.size(); i++) {
-            stringBuilder.append(friends.get(i).getName());
-            if (i < friends.size() - 1) {
-                stringBuilder.append(",");
+        if (friends != null) {
+            for (int i = 0; i < friends.size(); i++) {
+                stringBuilder.append(friends.get(i).getName());
+                if (i < friends.size() - 1) {
+                    stringBuilder.append(",");
+                }
             }
         }
         stringBuilder.append(":");
 
-        for (int i = 0; i < blocked.size(); i++) {
-            stringBuilder.append(blocked.get(i).getName());
-            if (i < blocked.size() - 1) {
-                stringBuilder.append(",");
+        if (blocked != null) {
+            for (int i = 0; i < blocked.size(); i++) {
+                stringBuilder.append(blocked.get(i).getName());
+                if (i < blocked.size() - 1) {
+                    stringBuilder.append(",");
+                }
             }
         }
         return stringBuilder.toString();

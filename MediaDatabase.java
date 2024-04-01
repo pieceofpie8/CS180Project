@@ -162,7 +162,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
             return messages;
         } catch (InvalidTargetException e) {
             System.err.println("Error adding message: " + e.getMessage());
-            return null;
+            throw new InvalidTargetException("");
         }
     }
 
@@ -195,6 +195,8 @@ public class MediaDatabase implements MediaDatabaseInterface {
             String fileName = getDirectMessageFileName(sender, target);
             if (directMessageFiles.contains(fileName)) {
                 throw new InvalidTargetException("DMs with this person already exist!");
+            } else {
+                directMessageFiles.add(fileName);
             }
 
             FileWriter writer = new FileWriter(fileName);
