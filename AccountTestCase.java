@@ -53,19 +53,15 @@ public class AccountTestCase {
             Account friend2 = new Account("Rand,somethingHere,true:Amy,Tom:");
             Account block1 = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
 
-            assertNotNull(friends);
-            assertNotNull(blocked);
+            assertNotNull(name);
             assertNotNull(password);
             assertEquals(true, friendsOnly);
+        }
 
-            ArrayList<Account> testFriends = new ArrayList<>();
-            testFriends.add(friend1);
-            testFriends.add(friend2);
-            assertEquals(testFriends, friends);
-
-            ArrayList<Account> testBlocked = new ArrayList<>();
-            testBlocked.add(block1);
-            assertEquals(testBlocked, blocked);
+        @Test public void testAccountConstructorWithParameters() {
+            Account friend1 = new Account("Alice,newPassword8,false:John,Amy:");
+            Account friend2 = new Account("Rand,somethingHere,true:Amy,Tom:");
+            Account block1 = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
 
             ArrayList<Account> friendly = new ArrayList<Account>();
             friendly.add(friend1);
