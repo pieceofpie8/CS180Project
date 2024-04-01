@@ -46,7 +46,41 @@ public class AccountTestCase {
             testIn = new ByteArrayInputStream(str.getBytes());
             System.setIn(testIn);
         }
-        
+
+        @Test public void testAccountConstructor() {
+            Account test  = new Account("John,Password123,true:Alice,Rand:Amy");
+
+            assertNotNull(test.getName());
+            assertNotNull(test.getPassword());
+            assertEquals("Password123", test.getPassword());
+            assertEquals("John", test.getName());
+            assertEquals(true, test.getFriendsOnly());
+        }
+
+        @Test public void testAccountConstructorWithParameters() {
+            Account friend1 = new Account("Alice,newPassword8,false:John,Amy:");
+            Account friend2 = new Account("Rand,somethingHere,true:Amy,Tom:");
+            Account block1 = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
+
+            ArrayList<Account> friendly = new ArrayList<Account>();
+            friendly.add(friend1);
+            friendly.add(friend2);
+            ArrayList<Account> blocker = new ArrayList<Account>();
+            blocker.add(block1);
+
+            Account tester = new Account("John,Password123,true:Alice,Rand:Amy", friendly, blocker);
+
+            assertNotNull(tester.getFriends());
+            assertNotNull(tester.getBlocked());
+            assertNotNull(tester.getPassword());
+            assertNotNull(tester.getName());
+            assertEquals("John", tester.getName());
+            assertEquals("Password123", tester.getPassword());
+            assertEquals(true, tester.getFriendsOnly());
+
+            assertEquals(friendly, tester.getFriends());
+            assertEquals(blocker, tester.getBlocked());
+        }
 
         @Test public void testAddFriend() {
             Account test  = new Account("John,Password123,true:Alice,Rand:Amy");
@@ -59,7 +93,7 @@ public class AccountTestCase {
             testFriends.add(friend2);
             testFriends.add(testerFriend);
 
-            assertEquals(testFriends, friends);
+            assertEquals(testFriends, test.getFriends());
             Account testBlocked = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             boolean block = test.addFriend(testBlocked);
             assertEquals(false, block);
@@ -74,11 +108,11 @@ public class AccountTestCase {
             String[] testerBlocked = new String[1];
             testerBlocked[0] = "Amy";
             testerBlocked[1] = "Rand";
-            assertEquals(testerBlocked, blocked);
+            assertEquals(testerBlocked, test.getBlocked());
             ArrayList<Account> testFriends = new ArrayList<>();
             testFriends.add(friend1);
 
-            assertEquals(testFriends, friends);
+            assertEquals(testFriends, test.getFriends());
             Account alreadyBlock = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             boolean blocked = test.addBlocked(alreadyBlock);
             assertEquals(true, test.addBlocked(testBlocked));
@@ -96,7 +130,7 @@ public class AccountTestCase {
             newFriends.add(friend1);
 
             assertEquals(true, test.removeFriend(removed));
-            assertEquals(newFriends, friends);
+            assertEquals(newFriends, test.getFriends());
         }
 
         @Test public void testRemoveBlocked() {
@@ -107,7 +141,7 @@ public class AccountTestCase {
             ArrayList<Account> block = new ArrayList<>();
 
             assertEquals(true, test.removeBlocked(blockAccount));
-            assertEquals(block, blocked);
+            assertEquals(block, test.getBlocked());
         }
 
         @Test public void testAccountToString() {
