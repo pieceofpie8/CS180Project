@@ -1,17 +1,17 @@
 Compile and Run:
 To compile the project, run the following in the terminal:
-javac AccountInterface.java
-javac Account.java
-javac MediaDatabaseInterface.java
-javac MediaDatabase.java
-javac BadDataExcpetion.java
-javac InvalidTargetException.java
+"javac AccountInterface.java", 
+"javac Account.java", 
+"javac MediaDatabaseInterface.java", 
+"javac MediaDatabase.java", 
+"javac BadDataExcpetion.java", 
+"javac InvalidTargetException.java", 
 	
-javac InterfacesTestMain.java
-javac InterfacesTestCase.java
-javac MediaDatabaseTestCase.java
-javac AccountTestCase.java
-javac Main.java 
+"javac InterfacesTestMain.java",
+"javac InterfacesTestCase.java",
+"javac MediaDatabaseTestCase.java",
+"javac AccountTestCase.java",
+"javac Main.java",
 
 To run, type: “java Main” into the terminal.
 NOTES: 
