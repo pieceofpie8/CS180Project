@@ -49,12 +49,11 @@ public class AccountTestCase {
 
         @Test public void testAccountConstructor() {
             Account test  = new Account("John,Password123,true:Alice,Rand:Amy");
-            Account friend1 = new Account("Alice,newPassword8,false:John,Amy:");
-            Account friend2 = new Account("Rand,somethingHere,true:Amy,Tom:");
-            Account block1 = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
 
             assertNotNull(name);
             assertNotNull(password);
+            assertEquals("Password123", password);
+            assertEquals("John", name);
             assertEquals(true, friendsOnly);
         }
 
@@ -74,6 +73,9 @@ public class AccountTestCase {
             assertNotNull(friends);
             assertNotNull(blocked);
             assertNotNull(password);
+            assertNotNull(name);
+            assertEquals("John", name);
+            assertEquals("Password123", password);
             assertEquals(true, friendsOnly);
 
             assertEquals(friendly, friends);
