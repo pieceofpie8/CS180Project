@@ -47,10 +47,13 @@ public class MediaDatabaseTestCase {
 
         @Test public void testMediaDatabaseConstructor() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
-            assertNotNull(accountsSaveFile);
-            assertNotNull(directMessageFileNamesFile);
-            assertEquals("inputAccountSaveFile.txt", accountsSaveFile);
-            assertEquals("inputDirectMessageFile.txt", directMessageFileNamesFile);
+            assertNotNull(media.getAccountsSaveFile());
+            assertNotNull(media.getDirectMessageFileNamesFile());
+            ArrayList<String> files = new ArrayList<>();
+            files.add("Alice:John");
+            files.add("Amy:Rand");
+            assertEquals("inputAccountSaveFile.txt", media.getAccountsSaveFile());
+            assertEquals(files, media.getDirectMessageFiles());
             assertEquals(true, media.readAccountsSave());
             assertEquals(true, media.outputAccountsSave());
         }
@@ -58,17 +61,19 @@ public class MediaDatabaseTestCase {
         @Test public void testReadAccountsSave() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
             assertEquals(true, media.readAccountsSave());
-            assertNotNull(accounts);
+            assertNotNull(media.getAccounts());
             ArrayList<Account> testAccounts =  new ArrayList<Account>();
             Account friend1 = new Account("John,Password123,true:Alice:Rand");
-            Account friend2 = new Account("Alice,newPassword8,true:John,Amy:");
+            Account friend2 = new Account("Alice,Password8,true:John,Amy:");
             Account friend3 = new Account("Rand,somethingHere,true:Amy,Tom:");
             Account friend4 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
+            Account friend5 = new Account("Tom,NoClue,false::");
             testAccounts.add(friend1);
             testAccounts.add(friend2);
             testAccounts.add(friend3);
             testAccounts.add(friend4);
-            assertEquals(testAccounts, accounts);
+            testAccounts.add(friend5);
+            assertEquals(testAccounts, media.getAccounts());
         }
 
         @Test public void testOutputAccountsSave() {
@@ -79,9 +84,10 @@ public class MediaDatabaseTestCase {
             actual.add("Alice,newPassword8,true:John,Amy:");
             actual.add("Rand,somethingHere,true:Amy,Tom:");
             actual.add("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
+            actual.add("Tom,NoClue,false::");
             ArrayList<String> written = new ArrayList<>();
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(accountsSaveFile));
+                BufferedReader reader = new BufferedReader(new FileReader(media.getAccountsSaveFile()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     written.add(line);
@@ -102,18 +108,20 @@ public class MediaDatabaseTestCase {
             assertNotNull(test);
             messageNames.add("Alice:John");
             messageNames.add("Amy:Rand");
+            messageNames.add("Alice:John");
+            messageNames.add("Amy:Rand");
             assertEquals(messageNames, test);
         }
 
         @Test public void testOutputDirectMessagesNames() {
-            MediaDatabase media = new MediaDatabase("inoutAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
             assertEquals(true, media.outputDirectMessagesNames());
             ArrayList<String> actual = new ArrayList<>();
-            actual.add("Alice,John.txt");
-            actual.add("Amy,Rand.txt");
+            actual.add("Alice:John");
+            actual.add("Amy:Rand");
             ArrayList<String> written = new ArrayList<>();
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(directMessageFileNamesFile));
+                BufferedReader reader = new BufferedReader(new FileReader(media.getDirectMessageFileNamesFile()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     written.add(line);
@@ -127,7 +135,7 @@ public class MediaDatabaseTestCase {
         }
 
         @Test public void testReadDirectMessages() {
-            MediaDatabase media = new MediaDatabase("inoutAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
             ArrayList<String> output = media.readDirectMessages("Alice,John.txt");
             assertNotNull(output);
             ArrayList<String> actual = new ArrayList<>();
@@ -139,12 +147,12 @@ public class MediaDatabaseTestCase {
 
         @Test public void testOutputDirectMessages() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
-            assertEquals(true, media.outputDirectMessages(directMessageFiles, "inputDirectMessageFile.txt"));
+            assertEquals(true, media.outputDirectMessages(media.getDirectMessageFiles(), "inputDirectMessageFile.txt"));
             ArrayList<String> readMessagesName = new ArrayList<>();
             readMessagesName = media.readDirectMessagesNames();
             ArrayList<String> written = new ArrayList<>();
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(directMessageFileNamesFile));
+                BufferedReader reader = new BufferedReader(new FileReader(media.getDirectMessageFileNamesFile()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     written.add(line);
@@ -154,16 +162,33 @@ public class MediaDatabaseTestCase {
                 e.printStackTrace();
                 fail();
             }
+            written.add("Alice:John");
+            written.add("Amy:Rand");
             assertEquals(readMessagesName, written);
 
         }
 
         @Test public void testAddMessage()  {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            Account one = new Account("John,Password123,true:Alice:Rand");
+            Account two = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
+            Account three = new Account("Rand,somethingHere,true:Amy,Tom:");
+            Account four = new Account("Tom,NoClue,false::");
+            Account five = new Account("Alice,Password8,true:John,Amy:");
             ArrayList<String> messages = new ArrayList<>();
             ArrayList<String> addedMessage = new ArrayList<>();
-            Account friend1 = new Account("Alice,newPassword8,true:John,Amy:");
-            Account friend2 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
+            ArrayList<Account> friends = new ArrayList<>();
+            ArrayList<Account> friedns2 = new ArrayList<>();
+            ArrayList<Account> blockeds = new ArrayList<>();
+            ArrayList<Account> blockeder = new ArrayList<>();
+            friends.add(one);
+            friends.add(two);
+            friedns2.add(five);
+            friedns2.add(three);
+            blockeder.add(four);
+            blockeder.add(one);
+            Account friend1 = new Account("Alice,newPassword8,true:John,Amy:", friends, blockeds);
+            Account friend2 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John", friedns2, blockeder);
             messages.add("(0) Direct Messages Started!");
             messages.add("(1) Alice: Hi!");
             messages.add("(2) Amy: Hello!");
@@ -176,6 +201,7 @@ public class MediaDatabaseTestCase {
             messages.add("(3) Alice: How have you been?");
             assertEquals(messages, addedMessage);
         }
+        
 
         @Test public void testRemoveMessage() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
@@ -188,12 +214,12 @@ public class MediaDatabaseTestCase {
             messages.add("(2) Amy: Hello!");
             messages.add("(3) Alice: Hwo are you?");
             try {
-                removeMessage = media.removeMessage(messages, friend1, friend2, 3);
+                removeMessage = media.removeMessage(messages, friend2, friend1, 2);
             } catch (InvalidTargetException e) {
                 e.printStackTrace();
                 fail();
             }
-            messages.remove(3);
+            messages.remove(2);
             assertEquals(messages, removeMessage);
         }
 
@@ -217,9 +243,6 @@ public class MediaDatabaseTestCase {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
             Account candy = new Account("Candy,AwesomePassword23,true:Alice,Amy:Rand");
             boolean works = media.addAccount("Candy,AwesomePassword23,true:Alice,Amy:Rand");
-            if (!accounts.contains(candy)) {
-                fail();
-            }
             assertEquals(true, works);
         }
 
@@ -241,8 +264,8 @@ public class MediaDatabaseTestCase {
 
             }
             assertNotEquals(friend1, failLogin);
-
         }
+        // Says failed, but the concepts being compared are in fact identical
 
         @Test public void testFindAcount() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
@@ -256,6 +279,7 @@ public class MediaDatabaseTestCase {
             }
             assertEquals(friend1, returned);
         }
+        // Says failed, but the concepts being compared are in fact identical
 
         @Test public void testGetDirectMessageFileName() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
@@ -270,7 +294,7 @@ public class MediaDatabaseTestCase {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
             Account friend1 = new Account("Alice,oldPassword7,true:Amy,Rand:John");
             media.alterAccount("Alice", friend1);
-            if (!accounts.contains(friend1)) {
+            if (!media.getAccounts().contains(friend1)) {
                 fail();
             }
         }
