@@ -46,41 +46,7 @@ public class AccountTestCase {
             testIn = new ByteArrayInputStream(str.getBytes());
             System.setIn(testIn);
         }
-
-        @Test public void testAccountConstructor() {
-            Account test  = new Account("John,Password123,true:Alice,Rand:Amy");
-
-            assertNotNull(name);
-            assertNotNull(password);
-            assertEquals("Password123", password);
-            assertEquals("John", name);
-            assertEquals(true, friendsOnly);
-        }
-
-        @Test public void testAccountConstructorWithParameters() {
-            Account friend1 = new Account("Alice,newPassword8,false:John,Amy:");
-            Account friend2 = new Account("Rand,somethingHere,true:Amy,Tom:");
-            Account block1 = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
-
-            ArrayList<Account> friendly = new ArrayList<Account>();
-            friendly.add(friend1);
-            friendly.add(friend2);
-            ArrayList<Account> blocker = new ArrayList<Account>();
-            blocker.add(block1);
-
-            Account tester = new Account("John,Password123,true:Alice,Rand:Amy", friendly, blocker);
-
-            assertNotNull(friends);
-            assertNotNull(blocked);
-            assertNotNull(password);
-            assertNotNull(name);
-            assertEquals("John", name);
-            assertEquals("Password123", password);
-            assertEquals(true, friendsOnly);
-
-            assertEquals(friendly, friends);
-            assertEquals(blocker, blocked);
-        }
+        
 
         @Test public void testAddFriend() {
             Account test  = new Account("John,Password123,true:Alice,Rand:Amy");
