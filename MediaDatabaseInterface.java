@@ -19,4 +19,5 @@ public interface MediaDatabaseInterface {
     public String createDirectMessage(Account sender, Account target) throws InvalidTargetException;      //throw InvalidTargetException if the sender cannot send to the target (blocked, etc.) OR if the direct message already exists (check for filename)
                                                                             // Otherwise, write "(0) Direct Messages Started!\n" to a new file with a name made by the two Accounts. Add the filename to ArrayList<String> directMessageFiles. Return the filename.
     public void alterAccount(String accountName, Account replace);
+    public String getDirectMessageFileName(Account user1, Account user2);
 }

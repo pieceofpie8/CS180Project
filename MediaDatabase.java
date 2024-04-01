@@ -243,7 +243,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
         throw new BadDataException("No account exists by that name.");
     }
 
-    private String getDirectMessageFileName(Account user1, Account user2) {
+    public String getDirectMessageFileName(Account user1, Account user2) {
         ArrayList<String> names = new ArrayList<>(Arrays.asList(user1.getName(), user2.getName()));
         Collections.sort(names);
         return names.get(0) + "," + names.get(1) + ".txt";
