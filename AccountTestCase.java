@@ -49,9 +49,9 @@ public class AccountTestCase {
 
         @Test public void testAccountConstructor() {
             Account test  = new Account("John,Password123,true:Alice,Rand:Amy");
-            Account friend1 = new Account("Alice,newPassword8:John,Amy:");
+            Account friend1 = new Account("Alice,newPassword8,false:John,Amy:");
             Account friend2 = new Account("Rand,somethingHere,true:Amy,Tom:");
-            Account block1 = new Account("Amy,outOfIdeas:Alice,Rand:Tom,John");
+            Account block1 = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
 
             assertNotNull(friends);
             assertNotNull(blocked);
