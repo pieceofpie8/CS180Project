@@ -116,4 +116,10 @@ InterfacesTestMain and InterfacesTestCase:
 	These two classes go hand in hand with the purpose of testing if the interfaces of the class are implemented properly. The InterfacesTestMain class defines a main method that prints certain Strings depending on if the interfaces are correctly implemented. InterfacesTestCase uses InterfacesTestMain in a simple input/output test case to ensure that the correct string result is printed, indicating successful implementation.
 
 Main:
-	This class contains the main method used to run the program as a social media. It prompts to login or create an account and then allows the user to ___
+	This class contains the main method used to run the program as a social media. It prompts users to login or create an account and then allows the user to change their friends only status, change their friends, change their blocked, and read, send, delete, and start direct messages. This class / method utilized almost everything from MediaDatabase and Account to make the system work.
+
+ AccountTestCase: 
+	This class tests the Account class, and makes sure that the methods in this class are working as intended. Each method is tested in a separate test, except for all the return methods and set methods, which have been combined into one test case per method type to conserve space. In this class, there is a static class named TestCase, in which all the test cases are written and performed. AccountTestCase imports Junit in order to properly test the Account class. 
+
+MediaDatabaseTestCase:
+	This class tests the MediaDatabase class, and verifies that each method is working as intended. Each method creates new Account objects and runs the MediaDatabase methods, to ensure that the MediaDatabase methods are running properly, and giving the expected output. This class contains a static class named TestCase, which is used to test the MediaDatabase class. MediaDatabaseTestCase imports Junit, which it uses to test the class and make sure that each method is running correctly. 
