@@ -20,4 +20,9 @@ public interface MediaDatabaseInterface {
                                                                             // Otherwise, write "(0) Direct Messages Started!\n" to a new file with a name made by the two Accounts. Add the filename to ArrayList<String> directMessageFiles. Return the filename.
     public void alterAccount(String accountName, Account replace);
     public String getDirectMessageFileName(Account user1, Account user2);
+
+    public ArrayList<Account> getAccounts();
+    public String getAccountsSaveFile();
+    public String getDirectMessageFileNamesFile();
+    public ArrayList<String> getDirectMessageFiles();
 }

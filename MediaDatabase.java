@@ -257,4 +257,17 @@ public class MediaDatabase implements MediaDatabaseInterface {
         }
         throw new IllegalArgumentException("Account with name " + accountName + " not found.");
     }
+
+    public ArrayList<Account> getAccounts() {
+        return accounts;
+    }
+    public String getAccountsSaveFile() {
+        return accountsSaveFile;
+    }
+    public String getDirectMessageFileNamesFile() {
+        return directMessageFileNamesFile;
+    }
+    public ArrayList<String> getDirectMessageFiles() {
+        return directMessageFiles;
+    }
 }
