@@ -201,7 +201,7 @@ public class MediaDatabaseTestCase {
             messages.add("(3) Alice: How have you been?");
             assertEquals(messages, addedMessage);
         }
-        
+
 
         @Test public void testRemoveMessage() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
