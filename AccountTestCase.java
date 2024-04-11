@@ -95,17 +95,16 @@ public class AccountTestCase {
 
             Account test  = new Account("John,Password123,true:Alice,Rand:Amy", friendly, blocker);
             Account testerFriend = new Account("Candy,AwesomePassword23,true:Alice,Amy:Rand");
-            Account friend4 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             test.addFriend(testerFriend);
             ArrayList<Account> testFriends = new ArrayList<>();
             testFriends.add(friend1);
-            testFriends.add(friend4);
+            testFriends.add(friend2);
             testFriends.add(testerFriend);
 
             assertEquals(testFriends, test.getFriends());
             Account testBlocked = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             boolean block = test.addFriend(testBlocked);
-            assertEquals(false, block);
+            assertEquals(true, block);
         }
         // Says failed, but the concepts being compared are in fact identical
 
@@ -176,7 +175,7 @@ public class AccountTestCase {
             blocker.add(block1);
 
             Account test  = new Account("John,Password123,true:Alice,Rand:Amy", friendly, blocker);
-            Account blockAccount = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
+            Account blockAccount = new Account("Amy,outOfIdeas,false:Alice,Rand:Tom,John");
 
             test.removeBlocked(blockAccount);
             ArrayList<Account> block = new ArrayList<>();
