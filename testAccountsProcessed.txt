@@ -1,0 +1,5 @@
+John,Password123,true::
+Alice,newPassword8,true::
+Rand,somethingHere,true::
+Amy,outOfIdeas,true::
+Tom,NoClue,false::
