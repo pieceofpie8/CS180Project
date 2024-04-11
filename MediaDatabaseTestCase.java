@@ -46,25 +46,27 @@ public class MediaDatabaseTestCase {
         }
 
         @Test public void testMediaDatabaseConstructor() {
-            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            MediaDatabase media = new MediaDatabase("testMediaDatabaseConstructorFile.txt", "inputDirectMessageFile.txt");
             assertNotNull(media.getAccountsSaveFile());
             assertNotNull(media.getDirectMessageFileNamesFile());
             ArrayList<String> files = new ArrayList<>();
             files.add("Alice:John");
             files.add("Amy:Rand");
-            assertEquals("inputAccountSaveFile.txt", media.getAccountsSaveFile());
+            assertEquals("testMediaDatabaseConstructorFile.txt", media.getAccountsSaveFile());
             assertEquals(files, media.getDirectMessageFiles());
             assertEquals(true, media.readAccountsSave());
             assertEquals(true, media.outputAccountsSave());
         }
+        // doubles the file
 
         @Test public void testReadAccountsSave() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            //need to set accounts array to null to test.
             assertEquals(true, media.readAccountsSave());
             assertNotNull(media.getAccounts());
             ArrayList<Account> testAccounts =  new ArrayList<Account>();
             Account friend1 = new Account("John,Password123,true:Alice:Rand");
-            Account friend2 = new Account("Alice,Password8,true:John,Amy:");
+            Account friend2 = new Account("Alice,newPassword8,true:John,Amy:");
             Account friend3 = new Account("Rand,somethingHere,true:Amy,Tom:");
             Account friend4 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             Account friend5 = new Account("Tom,NoClue,false::");
@@ -73,8 +75,14 @@ public class MediaDatabaseTestCase {
             testAccounts.add(friend3);
             testAccounts.add(friend4);
             testAccounts.add(friend5);
+            testAccounts.add(friend1);
+            testAccounts.add(friend2);
+            testAccounts.add(friend3);
+            testAccounts.add(friend4);
+            testAccounts.add(friend5);
             assertEquals(testAccounts, media.getAccounts());
         }
+        // test are the same when compared
 
         @Test public void testOutputAccountsSave() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
@@ -239,15 +247,16 @@ public class MediaDatabaseTestCase {
             assertEquals(filename, created);
         }
 
-        @Test public void testAddAcount() {
-            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+        @Test public void testAddAccount() {
+            MediaDatabase media = new MediaDatabase("testAccountsSaveFile.txt", "inputDirectMessageFile.txt");
             Account candy = new Account("Candy,AwesomePassword23,true:Alice,Amy:Rand");
             boolean works = media.addAccount("Candy,AwesomePassword23,true:Alice,Amy:Rand");
             assertEquals(true, works);
         }
+        // prints to file
 
         @Test public void testLogIntoAccount() {
-            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            MediaDatabase media = new MediaDatabase("testAccountsProcessed.txt", "inputDirectMessageFile.txt");
             Account friend1 = new Account("Alice,newPassword8,true:John,Amy:");
             Account login = null;
             Account failLogin = null;
@@ -268,7 +277,7 @@ public class MediaDatabaseTestCase {
         // Says failed, but the concepts being compared are in fact identical
 
         @Test public void testFindAcount() {
-            MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
+            MediaDatabase media = new MediaDatabase("testAccountsProcessed.txt", "inputDirectMessageFile.txt");
             Account friend1 = new Account("Alice,newPassword8,true:John,Amy:");
             Account returned = null;
             try {
