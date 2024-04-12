@@ -13,73 +13,56 @@ public class SMClienttwo {
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
             System.out.println("Connected to server.");
-
-            out.println("login");
-            System.out.println("Enter Username:");
-            out.println(stdIn.readLine());
-            System.out.println("Enter Password:");
-            out.println(stdIn.readLine());
-
-            String serverResponse = in.readLine();
-            System.out.println("Server response: " + serverResponse);
-
-            out.println("create account");
-            System.out.println("Make Username:");
-            out.println(stdIn.readLine());
-            System.out.println("Make Password:");
-            out.println(stdIn.readLine());
-            System.out.println("Friends Only for messages? (true/false)");
-            out.println(stdIn.readLine());
-
-            serverResponse = in.readLine();
-            System.out.println("Server response: " + serverResponse);
-
+            System.out.println("Welcome");
             while (true) {
-                System.out.println("What would you like to do?\n(1)Starting a DM\n(2)Reading DMs" +
-                    "\n(3)Sending a DM\n(4)Deleting a DM\n(7)Exit");
-                String menuString = stdIn.readLine();
-                int menu = 0;
+                System.out.println("Would you like to log in (1) or create an account (2)?");
+                String logOrCreateString = stdIn.readLine();
+                boolean logOrCreateCheck = false;
+                int logOrCreate = 0;
                 try {
-                    menu = Integer.parseInt(menuString);
+                    logOrCreate = Integer.parseInt(logOrCreateString);
+                    if (logOrCreate == 1 || logOrCreate == 2) {
+                        logOrCreateCheck = true;
+                    }
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid selection");
                     continue;
                 }
+                if (logOrCreateCheck) {
+                    if (logOrCreate == 1) {
+                        System.out.println("Enter Username:");
+                        String username = stdIn.readLine();
+                        System.out.println("Enter Password:");
+                        String password = stdIn.readLine();
+                        if (username.contains(":") || username.contains(",")
+                            || password.contains(":") || password.contains(",")) {
+                            System.out.println("Invalid selection, no ':' or ','");
+                            continue;
+                        } else {
 
-                if (menu == 1) {
-                    System.out.println("Who are you starting a DM with?");
-                    String dmStartTargetName = stdIn.readLine();
-                    out.println("start_dm:" + dmStartTargetName);
-                    serverResponse = in.readLine();
-                    System.out.println(serverResponse);
-                } else if (menu == 2) {
-                    System.out.println("Who are you reading DMs with?");
-                    String dmReadTargetName = stdIn.readLine();
-                    out.println("read_dm:" + dmReadTargetName);
-                    serverResponse = in.readLine();
-                    System.out.println(serverResponse);
-                } else if (menu == 3) {
-                    System.out.println("Who are you sending a DM to?");
-                    String dmSendTargetName = stdIn.readLine();
-                    System.out.println("Enter Message:");
-                    String message = stdIn.readLine();
-                    out.println("send_dm:" + dmSendTargetName + ":" + message);
-                    serverResponse = in.readLine();
-                    System.out.println(serverResponse);
-                } else if (menu == 4) {
-                    System.out.println("Who are you removing a DM to?");
-                    String dmRemoveTargetName = stdIn.readLine();
-                    System.out.println("Enter Index of Message to remove:");
-                    String indexString = stdIn.readLine();
-                    out.println("delete_dm:" + dmRemoveTargetName + ":" + indexString);
-                    serverResponse = in.readLine();
-                    System.out.println(serverResponse);
-                } else if (menu == 7) {
-                    System.out.println("Bye");
-                    break;
+                        }
+                    } else { //Create account
+                        System.out.println("Make Username:");
+                        String newUsername = stdIn.readLine();
+                        System.out.println("Make Password:");
+                        String newPassword = stdIn.readLine();
+                        System.out.println("Friends Only for messages? (true/false)");
+                        String friendsOnly = stdIn.readLine();
+                        if (!friendsOnly.equals("true") && !friendsOnly.equals("false")) {
+                            System.out.println("Invalid selection, only true or false.");
+                            continue;
+                        }
+                        if (newUsername.contains(":") || newUsername.contains(",")
+                            || newPassword.contains(":") || newPassword.contains(",")) {
+                            System.out.println("Invalid selection, no ':' or ','");
+                            continue;
+                        } else {
+
+                        }
+                    }
                 }
+                break;
             }
-
         } catch (UnknownHostException e) {
             System.err.println("Unknown host " + SERVER_IP);
             e.printStackTrace();
