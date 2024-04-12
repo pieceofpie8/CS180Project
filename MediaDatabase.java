@@ -270,4 +270,9 @@ public class MediaDatabase implements MediaDatabaseInterface {
     public ArrayList<String> getDirectMessageFiles() {
         return directMessageFiles;
     }
+
+    @Override
+    public void setAccounts(ArrayList<Account> accounts) {
+        this.accounts = accounts;
+    }
 }
