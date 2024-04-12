@@ -144,7 +144,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
     }
 
     public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message)
-            throws InvalidTargetException {
+    throws InvalidTargetException {
         try {
             if (target.getFriendsOnly() && !target.getFriends().contains(sender)) {
                 throw new InvalidTargetException("Target accepts messages from friends only.");
