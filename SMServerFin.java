@@ -1,5 +1,3 @@
-import com.sun.source.tree.WhileLoopTree;
-
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -12,6 +10,7 @@ public class SMServerFin {
     private static ExecutorService pool = Executors.newFixedThreadPool(10);
 
     private static MediaDatabase mediaDatabase;
+
     private static final Object lock = new Object();
 
     public static void main(String[] args) {
@@ -44,7 +43,7 @@ public class SMServerFin {
             ) {
                 Account logIn = null;
 
-                while (true) {
+                while (true) {                          //create or log menu
                     String inputLine = in.readLine();
 
                     if (inputLine.equals("1")) {
@@ -54,48 +53,52 @@ public class SMServerFin {
                         try {
                             synchronized (lock) {
                                 logIn = mediaDatabase.logIntoAccount(logDataParts[0], logDataParts[1]);
-                                out.write("Logged in!");
-                                out.println();
-                                out.flush();
                             }
+                            out.write("Logged in!");
+                            out.println();
+                            out.flush();
 
                         } catch (BadDataException e) {
                             System.out.println("Username or password is wrong.");
-                            synchronized (lock) {
-                                out.write("Username or password is wrong.");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Username or password is wrong.");
+                            out.println();
+                            out.flush();
+
                             continue;
                         }
 
                     } else {
                         String logData = in.readLine();
                         String[] logDataParts = logData.split(",");
+
+
                         try {
-                            Account existant = mediaDatabase.findAccount(logDataParts[0]);
-                            System.out.println("Username is taken.");
                             synchronized (lock) {
-                                out.write("Username is taken.");
-                                out.println();
-                                out.flush();
+                                Account existant = mediaDatabase.findAccount(logDataParts[0]);
                             }
+                            System.out.println("Username is taken.");
+                            out.write("Username is taken.");
+                            out.println();
+                            out.flush();
+
                             continue;
                         } catch (BadDataException e) {
                             String logInAccountData = logDataParts[0] + "," + logDataParts[1] + "," + logDataParts[2] + "::";
                             logIn = new Account(logInAccountData);
                             synchronized (lock) {
                                 mediaDatabase.addAccount(logInAccountData);
-                                out.write("Account created!");
-                                out.println();
-                                out.flush();
                             }
+                            out.write("Account created!");
+                            out.println();
+                            out.flush();
                         }
+
                     }
+
                     break;
                 }
 
-                //todo MENU:
+                //MENU:
                 while (true) {
                     String menuIn = in.readLine();
 
@@ -106,10 +109,14 @@ public class SMServerFin {
                             //do nothing
                         } else if (friendsOnly.equals("true")) {
                             logIn.setFriendsOnly(true);
-                            mediaDatabase.alterAccount(logIn.getName(), logIn);
+                            synchronized (lock) {
+                                mediaDatabase.alterAccount(logIn.getName(), logIn);
+                            }
                         } else {
                             logIn.setFriendsOnly(false);
-                            mediaDatabase.alterAccount(logIn.getName(), logIn);
+                            synchronized (lock) {
+                                mediaDatabase.alterAccount(logIn.getName(), logIn);
+                            }
                         }
 
                         continue;
@@ -127,41 +134,39 @@ public class SMServerFin {
                             }
                         }
                         if (alreadyFriend) {
-                            synchronized (lock) {
-                                out.write("Failure: already a friend");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Failure: already a friend");
+                            out.println();
+                            out.flush();
+
                             continue;
                         }
 
                         try {
-                            Account addFriend = mediaDatabase.findAccount(newFriend);
+                            Account addFriend;
+                            synchronized (lock) {
+                                addFriend = mediaDatabase.findAccount(newFriend);
+                            }
                             boolean result = logIn.addFriend(addFriend);
                             if (!result) {
                                 System.out.println("System error failure");
-                                synchronized (lock) {
-                                    out.write("Failure: system error");
-                                    out.println();
-                                    out.flush();
-                                }
+                                out.write("Failure: system error");
+                                out.println();
+                                out.flush();
                                 continue;
                             }
                             synchronized (lock) {
                                 mediaDatabase.alterAccount(logIn.getName(), logIn);
-                                out.write("Success!");
-                                out.println();
-                                out.flush();
                             }
+                            out.write("Success!");
+                            out.println();
+                            out.flush();
                             continue;
 
                         } catch (BadDataException e) {
                             System.out.println("No account exists by that name");
-                            synchronized (lock) {
-                                out.write("Failure: no account exists by that name");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Failure: no account exists by that name");
+                            out.println();
+                            out.flush();
                             continue;
                         }
                     }
@@ -175,23 +180,21 @@ public class SMServerFin {
                             if (removeFriend.equals(friends.get(i).getName())) {
                                 logIn.removeFriend(friends.get(i));
                                 System.out.println("done");
-                                mediaDatabase.alterAccount(logIn.getName(), logIn);
+                                synchronized (lock) {
+                                    mediaDatabase.alterAccount(logIn.getName(), logIn);
+                                }
 
                                 result = true;
                             }
                         }
                         if (result) {
-                            synchronized (lock) {
-                                out.write("Success!");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Success!");
+                            out.println();
+                            out.flush();
                         } else {
-                            synchronized (lock) {
-                                out.write("Failure");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Failure");
+                            out.println();
+                            out.flush();
                         }
 
                         continue;
@@ -209,41 +212,39 @@ public class SMServerFin {
                             }
                         }
                         if (alreadyBlocked) {
-                            synchronized (lock) {
-                                out.write("Failure: already blocked");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Failure: already blocked");
+                            out.println();
+                            out.flush();
+
                             continue;
                         }
 
                         try {
-                            Account addBlocked = mediaDatabase.findAccount(newBlocked);
+                            Account addBlocked;
+                            synchronized (lock) {
+                                addBlocked = mediaDatabase.findAccount(newBlocked);
+                            }
                             boolean result = logIn.addBlocked(addBlocked);
                             if (!result) {
                                 System.out.println("System error failure");
-                                synchronized (lock) {
-                                    out.write("Failure: system error");
-                                    out.println();
-                                    out.flush();
-                                }
+                                out.write("Failure: system error");
+                                out.println();
+                                out.flush();
                                 continue;
                             }
                             synchronized (lock) {
                                 mediaDatabase.alterAccount(logIn.getName(), logIn);
-                                out.write("Success");
-                                out.println();
-                                out.flush();
                             }
+                            out.write("Success");
+                            out.println();
+                            out.flush();
                             continue;
 
                         } catch (BadDataException e) {
                             System.out.println("No account exists by that name");
-                            synchronized (lock) {
-                                out.write("Failure: no account by that name");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Failure: no account by that name");
+                            out.println();
+                            out.flush();
                             continue;
                         }
                     }
@@ -257,67 +258,68 @@ public class SMServerFin {
                             if (removeBlocked.equals(blocked.get(i).getName())) {
                                 logIn.removeBlocked(blocked.get(i));
                                 System.out.println("done");
-                                mediaDatabase.alterAccount(logIn.getName(), logIn);
+                                synchronized (lock) {
+                                    mediaDatabase.alterAccount(logIn.getName(), logIn);
+                                }
 
                                 result = true;
                             }
                         }
 
                         if (result) {
-                            synchronized (lock) {
-                                out.write("Success!");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Success!");
+                            out.println();
+                            out.flush();
                         } else {
-                            synchronized (lock) {
-                                out.write("Failure");
-                                out.println();
-                                out.flush();
-                            }
+                            out.write("Failure");
+                            out.println();
+                            out.flush();
                         }
                         continue;
                     }
 
                     if (menuIn.equals("6")) {                       //option 6
                         String dmMenu = in.readLine();
+                        System.out.println(dmMenu);
 
                         if (dmMenu.equals("1")) {
                             String dmStartTargetName = in.readLine();
 
                             try {
-                                Account dmStartTarget = mediaDatabase.findAccount(dmStartTargetName);
+                                Account dmStartTarget;
+                                synchronized (lock) {
+                                    dmStartTarget = mediaDatabase.findAccount(dmStartTargetName);
+                                }
 
                                 try {
-
                                     synchronized (lock) {
                                         mediaDatabase.createDirectMessage(logIn, dmStartTarget);
                                         System.out.println("DM has been created!");
-                                        mediaDatabase.outputDirectMessagesNames();
-                                        out.write("Success!");
-                                        out.println();
-                                        out.flush();
+                                        mediaDatabase.outputDirectMessagesNames();              //updates save file
+
                                     }
+                                    out.write("Success!");
+                                    out.println();
+                                    out.flush();
 
                                     continue;
                                 } catch (InvalidTargetException e) {
                                     System.out.println("You cannot send to this person OR a DM with them already exists.");
-                                    synchronized (lock) {
-                                        out.write("Failure: invalid target");
-                                        out.println();
-                                        out.flush();
-                                    }
+
+                                    out.write("Failure: invalid target");
+                                    out.println();
+                                    out.flush();
 
                                     continue;
                                 }
 
                             } catch (BadDataException e) {
                                 System.out.println("No account exists by that name");
-                                synchronized (lock) {
-                                    out.write("Failure: no account exists by that name");
-                                    out.println();
-                                    out.flush();
-                                }
+
+                                out.write("Failure: no account exists by that name");
+                                out.println();
+                                out.flush();
+
                                 continue;
                             }
                         }
@@ -326,42 +328,44 @@ public class SMServerFin {
                             String dmReadTargetName = in.readLine();
 
                             try {
-                                Account dmReadTarget = mediaDatabase.findAccount(dmReadTargetName);
+                                synchronized (lock) {
+                                    Account dmReadTarget = mediaDatabase.findAccount(dmReadTargetName);
+                                }
 
                                 ArrayList<String> namesForFileName = new ArrayList<>();
                                 namesForFileName.add(logIn.getName());
                                 namesForFileName.add(dmReadTargetName);
                                 namesForFileName.sort(Comparator.naturalOrder());
                                 String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1) + ".txt";
+
+                                out.write("Success!");
+                                out.println();
+                                out.flush();
+
+                                ArrayList<String> messages;
                                 synchronized (lock) {
-                                    out.write("Success!");
-                                    out.println();
-                                    out.flush();
+                                    messages = mediaDatabase.readDirectMessages(fileName);
                                 }
-                                ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
-                                synchronized (lock) {
-                                    out.write(messages.size());
-                                    out.println();
-                                    out.flush();
-                                }
+                                out.write("" + messages.size());
+                                out.println();
+                                out.flush();
 
                                 for (int i = 0; i < messages.size(); i++) {
                                     System.out.println(messages.get(i));
-                                    synchronized (lock) {
-                                        out.write(messages.get(i));
-                                        out.println();
-                                        out.flush();
-                                    }
+
+                                    out.write(messages.get(i));
+                                    out.println();
+                                    out.flush();
                                 }
                                 continue;
 
                             } catch (BadDataException e) {
                                 System.out.println("No account exists by that name");
-                                synchronized (lock) {
-                                    out.write("Failure: no account exists by that name");
-                                    out.println();
-                                    out.flush();
-                                }
+
+                                out.write("Failure: no account exists by that name");
+                                out.println();
+                                out.flush();
+
                                 continue;
                             }
                         }
@@ -370,7 +374,10 @@ public class SMServerFin {
                             String dmSendTargetName = in.readLine();
 
                             try {
-                                Account dmSendTarget = mediaDatabase.findAccount(dmSendTargetName);
+                                Account dmSendTarget;
+                                synchronized (lock) {
+                                    dmSendTarget = mediaDatabase.findAccount(dmSendTargetName);
+                                }
 
                                 ArrayList<String> namesForFileName = new ArrayList<>();
                                 namesForFileName.add(logIn.getName());
@@ -378,54 +385,55 @@ public class SMServerFin {
                                 namesForFileName.sort(Comparator.naturalOrder());
                                 String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1) + ".txt";
 
-                                ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
+                                ArrayList<String> messages;
                                 synchronized (lock) {
-                                    System.out.println("Enter Message:");
-                                    out.write("Enter Message:");
-                                    out.println();
-                                    out.flush();
+                                    messages = mediaDatabase.readDirectMessages(fileName);
                                 }
+
+
+                                System.out.println("Enter Message:");
+                                out.write("Enter Message:");
+                                out.println();
+                                out.flush();
                                 String message = in.readLine();
 
                                 ArrayList<String> newMessages;
                                 try {
-                                    newMessages = mediaDatabase.addMessage(messages, logIn, dmSendTarget, message);
+                                    synchronized (lock) {
+                                        newMessages = mediaDatabase.addMessage(messages, logIn, dmSendTarget, message);
+                                    }
                                 } catch (InvalidTargetException e) {
                                     System.out.println("You cannot send a message to this person!");
-                                    synchronized (lock) {
-                                        out.write("Failure: invalid target");
-                                        out.println();
-                                        out.flush();
-                                    }
+
+                                    out.write("Failure: invalid target");
+                                    out.println();
+                                    out.flush();
 
                                     continue;
                                 }
 
-                                boolean result = mediaDatabase.outputDirectMessages(newMessages, fileName);
+                                boolean result;
+                                synchronized (lock) {
+                                    result = mediaDatabase.outputDirectMessages(newMessages, fileName);
+                                }
                                 if (!result) {
                                     System.out.println("System error");
-                                    synchronized (lock) {
-                                        out.write("Failure: system error");
-                                        out.println();
-                                        out.flush();
-                                    }
+                                    out.write("Failure: system error");
+                                    out.println();
+                                    out.flush();
                                 } else {
                                     System.out.println("Sent");
-                                    synchronized (lock) {
-                                        out.write("Success!");
-                                        out.println();
-                                        out.flush();
-                                    }
+                                    out.write("Success!");
+                                    out.println();
+                                    out.flush();
                                 }
                                 continue;
 
                             } catch (BadDataException e) {
                                 System.out.println("No account exists by that name");
-                                synchronized (lock) {
-                                    out.write("Failure: no account exists by that name");
-                                    out.println();
-                                    out.flush();
-                                }
+                                out.write("Failure: no account exists by that name");
+                                out.println();
+                                out.flush();
                                 continue;
                             }
                         }
@@ -434,19 +442,25 @@ public class SMServerFin {
                             String dmRemoveTargetName = in.readLine();
 
                             try {
-                                Account dmRemoveTarget = mediaDatabase.findAccount(dmRemoveTargetName);
+                                Account dmRemoveTarget;
+                                synchronized (lock) {
+                                    dmRemoveTarget = mediaDatabase.findAccount(dmRemoveTargetName);
+                                }
 
                                 ArrayList<String> namesForFileName = new ArrayList<>();
                                 namesForFileName.add(logIn.getName());
                                 namesForFileName.add(dmRemoveTargetName);
                                 namesForFileName.sort(Comparator.naturalOrder());
                                 String fileName = namesForFileName.get(0) + "," + namesForFileName.get(1) + ".txt";
-                                ArrayList<String> messages = mediaDatabase.readDirectMessages(fileName);
+
+                                ArrayList<String> messages;
                                 synchronized (lock) {
-                                    out.write("Enter Index of Message to remove:");
-                                    out.println();
-                                    out.flush();
+                                    messages = mediaDatabase.readDirectMessages(fileName);
                                 }
+
+                                out.write("Enter Index of Message to remove:");
+                                out.println();
+                                out.flush();
 
                                 String indexString = in.readLine();
                                 int index = 0;
@@ -454,52 +468,47 @@ public class SMServerFin {
                                     index = Integer.parseInt(indexString);
                                 } catch (NumberFormatException e) {
                                     System.out.println("Invalid Index");
-                                    synchronized (lock) {
-                                        out.write("Failure: Invalid Index");
-                                        out.println();
-                                        out.flush();
-                                    }
+                                    out.write("Failure: Invalid Index");
+                                    out.println();
+                                    out.flush();
                                     continue;
                                 }
 
                                 ArrayList<String> newMessages;
                                 try {
-                                    newMessages = mediaDatabase.removeMessage(messages, logIn, dmRemoveTarget, index);
+                                    synchronized (lock) {
+                                        newMessages = mediaDatabase.removeMessage(messages, logIn, dmRemoveTarget, index);
+                                    }
                                 } catch (InvalidTargetException e) {
                                     System.out.println("You cannot delete this message");
-                                    synchronized (lock) {
-                                        out.write("Failure: you cannot delete this message");
-                                        out.println();
-                                        out.flush();
-                                    }
+                                    out.write("Failure: you cannot delete this message");
+                                    out.println();
+                                    out.flush();
                                     continue;
                                 }
 
-                                boolean result = mediaDatabase.outputDirectMessages(newMessages, fileName);
+                                boolean result;
+                                synchronized (lock) {
+                                    result = mediaDatabase.outputDirectMessages(newMessages, fileName);
+                                }
                                 if (!result) {
                                     System.out.println("System error");
-                                    synchronized (lock) {
-                                        out.write("Failure: system error");
-                                        out.println();
-                                        out.flush();
-                                    }
+                                    out.write("Failure: system error");
+                                    out.println();
+                                    out.flush();
                                 } else {
                                     System.out.println("Removed");
-                                    synchronized (lock) {
-                                        out.write("Success!");
-                                        out.println();
-                                        out.flush();
-                                    }
+                                    out.write("Success!");
+                                    out.println();
+                                    out.flush();
                                 }
                                 continue;
 
                             } catch (BadDataException e) {
                                 System.out.println("No account exists by that name");
-                                synchronized (lock) {
-                                    out.write("Failure: no account exists by that name");
-                                    out.println();
-                                    out.flush();
-                                }
+                                out.write("Failure: no account exists by that name");
+                                out.println();
+                                out.flush();
                                 continue;
                             }
                         }
@@ -512,11 +521,16 @@ public class SMServerFin {
 
                     if (menuIn.equals("7")) {
                         System.out.println("Bye");
-                        mediaDatabase.outputAccountsSave();
-                        mediaDatabase.outputDirectMessagesNames();
+                        synchronized (lock) {
+                            mediaDatabase.outputAccountsSave();
+                            mediaDatabase.outputDirectMessagesNames();
+                        }
                         break;
                     }
                 }
+
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
