@@ -26,5 +26,5 @@ public interface MediaDatabaseInterface {
     public String getDirectMessageFileNamesFile();
     public ArrayList<String> getDirectMessageFiles();
 
-    public ArrayList<Account> setAccounts();
+    public ArrayList<Account> setAccounts(ArrayList<Account> accounts);
 }
