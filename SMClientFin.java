@@ -7,6 +7,8 @@ public class SMClientFin {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12346;
 
+    private static final Object lock = new Object();
+
     public static void main(String[] args) {
         try (
                 Socket socket = new Socket(SERVER_IP, SERVER_PORT);
@@ -28,16 +30,17 @@ public class SMClientFin {
                         logOrCreateCheck = true;
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid selection");
+                    System.out.println("Invalid selection. Try again.");
                     continue;
                 }
 
                 if (logOrCreateCheck) {
                     if (logOrCreate == 1) {             //log in
-                        //todo to server
-                        out.write("1");
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write("1");
+                            out.println();
+                            out.flush();
+                        }
 
                         System.out.println("Enter Username:");
                         String username = scan.nextLine();
@@ -45,20 +48,22 @@ public class SMClientFin {
                         String password = scan.nextLine();
                         if (username.contains(":") || username.contains(",")
                                 || password.contains(":") || password.contains(",")) {
-                            System.out.println("Invalid selection, no ':' or ','");
-
+                            System.out.println("Invalid selection, please do not include " +
+                                    "the following charaters: ':' or ','");
                             //todo to server. INVALID
-                            out.write(":,:");
-                            out.println();
-                            out.flush();
-
+                            synchronized (lock) {
+                                out.write(":,:");
+                                out.println();
+                                out.flush();
+                            }
                             continue;
                         } else {
-
                             //todo to server. VALID
-                            out.write(username + "," + password);
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(username + "," + password);
+                                out.println();
+                                out.flush();
+                            }
 
                             String response = in.readLine();
                             System.out.println(response);
@@ -69,23 +74,27 @@ public class SMClientFin {
 
                     } else {                            //create account
                         //todo to server
-                        out.write("2");
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write("2");
+                            out.println();
+                            out.flush();
+                        }
 
                         System.out.println("Make Username:");
                         String newUsername = scan.nextLine();
                         System.out.println("Make Password:");
                         String newPassword = scan.nextLine();
                         System.out.println("Friends Only for messages? (true/false)");
-                        String freindsOnly = scan.nextLine();
-                        if (!freindsOnly.equals("true") && !freindsOnly.equals("false")) {
+                        String friendsOnly = scan.nextLine();
+                        if (!friendsOnly.equals("true") && !friendsOnly.equals("false")) {
                             System.out.println("Invalid selection, only true or false.");
 
                             //todo to server. INVALID
-                            out.write(":,:,:");
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(":,:,:");
+                                out.println();
+                                out.flush();
+                            }
 
                             continue;
                         }
@@ -94,17 +103,21 @@ public class SMClientFin {
                             System.out.println("Invalid selection, no ':' or ','");
 
                             //todo to server. INVALID
-                            out.write(":,:,:");
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(":,:,:");
+                                out.println();
+                                out.flush();
+                            }
 
                             continue;
                         } else {
 
                             //todo to server. VALID
-                            out.write(newUsername + "," + newPassword + "," + freindsOnly);
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(newUsername + "," + newPassword + "," + friendsOnly);
+                                out.println();
+                                out.flush();
+                            }
 
                             String response = in.readLine();
                             System.out.println(response);
@@ -137,27 +150,33 @@ public class SMClientFin {
                     continue;
                 }
 
-                out.write(menuString);
-                out.println();
-                out.flush();
+                synchronized (lock) {
+                    out.write(menuString);
+                    out.println();
+                    out.flush();
+                }
 
                 if (menu == 1) {
                     System.out.println("Friends Only for messages? (true/false)");
-                    String freindsOnly = scan.nextLine();
-                    if (!freindsOnly.equals("true") && !freindsOnly.equals("false")) {
+                    String friendsOnly = scan.nextLine();
+                    if (!friendsOnly.equals("true") && !friendsOnly.equals("false")) {
                         System.out.println("Invalid selection, only true or false.");
 
                         //todo to server. INVALID
-                        out.write(";");
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(";");
+                            out.println();
+                            out.flush();
+                        }
 
                         continue;
                     } else {
                         //todo to server. VALID
-                        out.write(freindsOnly);
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(friendsOnly);
+                            out.println();
+                            out.flush();
+                        }
 
                         continue;
                     }
@@ -168,9 +187,11 @@ public class SMClientFin {
                     String newFriend = scan.nextLine();
 
                     //todo to server. VALID
-                    out.write(newFriend);
-                    out.println();
-                    out.flush();
+                    synchronized (lock) {
+                        out.write(newFriend);
+                        out.println();
+                        out.flush();
+                    }
 
                     String response = in.readLine();
                     System.out.println(response);
@@ -182,9 +203,11 @@ public class SMClientFin {
                     String removeFriend = scan.nextLine();
 
                     //todo to server. VALID
-                    out.write(removeFriend);
-                    out.println();
-                    out.flush();
+                    synchronized (lock) {
+                        out.write(removeFriend);
+                        out.println();
+                        out.flush();
+                    }
 
                     String response = in.readLine();
                     System.out.println(response);
@@ -196,9 +219,11 @@ public class SMClientFin {
                     String newBlocked = scan.nextLine();
 
                     //todo to server. VALID
-                    out.write(newBlocked);
-                    out.println();
-                    out.flush();
+                    synchronized (lock) {
+                        out.write(newBlocked);
+                        out.println();
+                        out.flush();
+                    }
 
                     String response = in.readLine();
                     System.out.println(response);
@@ -210,9 +235,11 @@ public class SMClientFin {
                     String removeBlocked = scan.nextLine();
 
                     //todo to server. VALID
-                    out.write(removeBlocked);
-                    out.println();
-                    out.flush();
+                    synchronized (lock) {
+                        out.write(removeBlocked);
+                        out.println();
+                        out.flush();
+                    }
 
                     String response = in.readLine();
                     System.out.println(response);
@@ -231,9 +258,11 @@ public class SMClientFin {
                             System.out.println("Invalid number");
 
                             //todo to server. INVALID
-                            out.write(";");
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(";");
+                                out.println();
+                                out.flush();
+                            }
 
                             continue;
                         }
@@ -241,26 +270,32 @@ public class SMClientFin {
                         System.out.println("Invalid selection");
 
                         //todo to server. INVALID
-                        out.write(";");
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(";");
+                            out.println();
+                            out.flush();
+                        }
 
                         continue;
                     }
 
                     //todo to server. VALID
-                    out.write(dmMenu);
-                    out.println();
-                    out.flush();
+                    synchronized (lock) {
+                        out.write(dmMenu);
+                        out.println();
+                        out.flush();
+                    }
 
                     if (dmMenu == 1) {
                         System.out.println("Who are you starting a DM with?");
                         String dmStartTargetName = scan.nextLine();
 
                         //todo to server. VALID
-                        out.write(dmStartTargetName);
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(dmStartTargetName);
+                            out.println();
+                            out.flush();
+                        }
 
                         String response = in.readLine();
                         System.out.println(response);
@@ -272,9 +307,11 @@ public class SMClientFin {
                         String dmReadTargetName = scan.nextLine();
 
                         //todo to server. VALID
-                        out.write(dmReadTargetName);
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(dmReadTargetName);
+                            out.println();
+                            out.flush();
+                        }
 
                         String response = in.readLine();
                         System.out.println(response);
@@ -297,9 +334,11 @@ public class SMClientFin {
                         String dmSendTargetName = scan.nextLine();
 
                         //todo to server. VALID
-                        out.write(dmSendTargetName);
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(dmSendTargetName);
+                            out.println();
+                            out.flush();
+                        }
 
                         String response = in.readLine();
                         System.out.println(response);
@@ -308,9 +347,11 @@ public class SMClientFin {
                             String message = scan.nextLine();
 
                             //todo to server. VALID
-                            out.write(message);
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(message);
+                                out.println();
+                                out.flush();
+                            }
 
                             String response2 = in.readLine();
                             System.out.println(response2);
@@ -323,9 +364,11 @@ public class SMClientFin {
                         String dmRemoveTargetName = scan.nextLine();
 
                         //todo to server. VALID
-                        out.write(dmRemoveTargetName);
-                        out.println();
-                        out.flush();
+                        synchronized (lock) {
+                            out.write(dmRemoveTargetName);
+                            out.println();
+                            out.flush();
+                        }
 
                         String response = in.readLine();
                         System.out.println(response);
@@ -334,17 +377,17 @@ public class SMClientFin {
                             String indexRemove = scan.nextLine();
 
                             //todo to server. VALID
-                            out.write(indexRemove);
-                            out.println();
-                            out.flush();
+                            synchronized (lock) {
+                                out.write(indexRemove);
+                                out.println();
+                                out.flush();
+                            }
 
                             String response2 = in.readLine();
                             System.out.println(response2);
                         }
                         continue;
                     }
-
-                    //end of DM Menu
                 }
 
                 if (menu == 7) {
