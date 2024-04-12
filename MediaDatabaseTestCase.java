@@ -61,7 +61,8 @@ public class MediaDatabaseTestCase {
 
         @Test public void testReadAccountsSave() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
-            //need to set accounts array to null to test.
+            ArrayList<Account> newAccounts = new ArrayList<>();
+            media.setAccounts(newAccounts);
             assertEquals(true, media.readAccountsSave());
             assertNotNull(media.getAccounts());
             ArrayList<Account> testAccounts =  new ArrayList<Account>();
@@ -70,11 +71,6 @@ public class MediaDatabaseTestCase {
             Account friend3 = new Account("Rand,somethingHere,true:Amy,Tom:");
             Account friend4 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
             Account friend5 = new Account("Tom,NoClue,false::");
-            testAccounts.add(friend1);
-            testAccounts.add(friend2);
-            testAccounts.add(friend3);
-            testAccounts.add(friend4);
-            testAccounts.add(friend5);
             testAccounts.add(friend1);
             testAccounts.add(friend2);
             testAccounts.add(friend3);
