@@ -1,6 +1,29 @@
 import java.util.ArrayList;
 
+/**
+ * CS 180 Group Project - MediaDatabaseInterface
+ *
+ * Defines the interface for the MediaDatabase class.
+ */
+
 public interface MediaDatabaseInterface {
+
+    /**
+     * Fields:
+     * private ArrayList<Account> accounts; an array containing all the accounts in the
+     * database.
+     * private String accountsSaveFile; a String holding the name of the save file with
+     * account information
+     * private String directMessageFileNamesFile; a String holding the name of the save
+     * file with the names of existing Direct Message files
+     * private ArrayList<String> directMessageFiles; an array containing the names of
+     * all the existing Direct Message files.
+     *
+     * Constructors:
+     * public MediaDatabase(String accountsSaveFile, String directMessageFileNamesFile);
+     * Constructs a MediaDatabase using the file names for the save files.
+     */
+
     public boolean addAccount(String accountData);         //would call account instructor and add the account object to accounts ArrayList
 
     public boolean readAccountsSave();                     //creates accounts ArrayList based on contents of saved file. File name is specified in constructor
@@ -25,6 +48,4 @@ public interface MediaDatabaseInterface {
     public String getAccountsSaveFile();
     public String getDirectMessageFileNamesFile();
     public ArrayList<String> getDirectMessageFiles();
-
-    public void setAccounts(ArrayList<Account> accounts);
 }

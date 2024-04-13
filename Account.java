@@ -1,5 +1,12 @@
 import java.util.ArrayList;
 
+/**
+ * CS 180 Group Project - Account
+ *
+ * Defines the Account class. The Account class is used to make Account objects
+ * descriptive of accounts on the social media program.
+ */
+
 public class Account implements AccountInterface {
     private String name;
     private String password;

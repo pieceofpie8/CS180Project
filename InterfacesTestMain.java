@@ -1,6 +1,13 @@
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * CS 180 Group Project - InterfacesTestMain
+ *
+ * Defines InterfacesTestMain, which contains a main method for the purpose of
+ * testing if every class correctly implements their interface.
+ */
+
 public class InterfacesTestMain {
     public static void main(String[] args) {
         //test AccountInterface
@@ -65,6 +72,70 @@ public class InterfacesTestMain {
 
         } else {
             System.out.println("MediaDatabase does not implement MediaDatabaseInterface");
+        }
+
+        //test SMClientFin
+        SMClientFin client = new SMClientFin();
+        if (client instanceof SMClientFin) {
+
+            Method[] clientMethods = SMClientFin.class.getDeclaredMethods();
+            Method[] clientInterfaceMethods = SMClientFinInterface.class.getDeclaredMethods();
+
+            //swapping interface methods
+            for (int i = 0; i < clientInterfaceMethods.length; i++) {
+                int holdCount = 0;
+
+                //swapping client methods
+                for (int j = 0; j < clientMethods.length; j++) {
+                    if (clientInterfaceMethods[i].getName().equals(clientMethods[j].getName())
+                            && Arrays.equals(clientInterfaceMethods[i].getParameterTypes(),
+                            clientMethods[j].getParameterTypes())) {
+                        holdCount++;
+                    }
+                }
+
+                if (holdCount != 1) {
+                    System.out.println("SMClientFin does not correctly implement SMClientFinInterface");
+                    break;
+                }
+            }
+
+            System.out.println("SMClientFin correctly implements SMClientFinInterface");
+
+        } else {
+            System.out.println("SMClientFin does not implement SMClientFinInterface");
+        }
+
+        //test SMServerFin
+        SMServerFin server = new SMServerFin();
+        if (server instanceof SMServerFin) {
+
+            Method[] serverMethods = SMServerFin.class.getDeclaredMethods();
+            Method[] serverInterfaceMethods = SMServerFinInterface.class.getDeclaredMethods();
+
+            //swapping interface methods
+            for (int i = 0; i < serverInterfaceMethods.length; i++) {
+                int holdCount = 0;
+
+                //swapping server methods
+                for (int j = 0; j < serverMethods.length; j++) {
+                    if (serverInterfaceMethods[i].getName().equals(serverMethods[j].getName())
+                            && Arrays.equals(serverInterfaceMethods[i].getParameterTypes(),
+                            serverMethods[j].getParameterTypes())) {
+                        holdCount++;
+                    }
+                }
+
+                if (holdCount != 1) {
+                    System.out.println("SMServerFin does not correctly implement SMServerFinInterface");
+                    break;
+                }
+            }
+
+            System.out.println("SMServerFin correctly implements SMServerFinInterface");
+
+        } else {
+            System.out.println("SMServerFin does not implement SMServerFinInterface");
         }
     }
 }
