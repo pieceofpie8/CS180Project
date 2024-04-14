@@ -92,5 +92,6 @@ Message files -
 	“(2) Name2: message”
 
 # Manual Testing Instructions for IO:
+
 	Begin by running the server, then an instance of both SMClientFin and SMCli2. Log into the app as John on SMClientFin by typing the following lines as prompted: "1", "John", "Password123". Then send a message to Alice by inputing the following lines as prompted: "6", "3", "Alice", "testing message". Then log into the app as Alice on SMCli2 by typing the following as prompted: "1", "Alice", "Password8". Then read messaged with John by doing the following: "6", "2", "John". You should see the original messages as well as the added "testing message". This shows that the IO is working properly as things are sent to the server, which updates the database.
 	Feel free to try some of the other commands as well by using the program as it instructs to be used when run. See the accountsSave.txt for existing accounts, their friends, etc.
