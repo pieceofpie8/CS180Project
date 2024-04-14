@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
  * CS 180 Group Project - SMServerFin
  *
  * Defines SMServerFin, which is the Server that connects to multiple clients and
- * doe the processing of data.
+ * does the processing of data.
  */
 
 public class SMServerFin implements SMClientFinInterface {

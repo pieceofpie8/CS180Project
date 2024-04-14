@@ -4,7 +4,7 @@
  * Defines SMServerFinInterface, which is the interface of SMServerFin.
  */
 
-public class SMServerFinInterface {
+public interface SMServerFinInterface {
 
     /**
      * Fields:
