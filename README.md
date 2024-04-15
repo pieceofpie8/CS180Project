@@ -68,10 +68,10 @@ SMServerFinInterface:
 	Defines SMServerFinInterface, which is the interface of SMServerFin. Because SMServerFin has no constructors or methods aside from main and run, it is more or less empty. It also has details for the fields used (SERVER_IP, and SERVER_PORT).
 
 SMServerFin:
-	Defines SMServerFin, which is the Server that connects to multiple clients and does the processing of data. Effectively replaces the old Main method alongside SMClientFin.
+	Defines SMServerFin, which is the Server that connects to multiple clients and does the processing of data. Effectively replaces the old Main method alongside SMClientFin. Testing should be done manually as described below.
 
 SMClientFin:
-	Defines SMClientFin, which is the Client side that connects to the server. This is functionally what the users directly interact with. Effectively replaces the old Main method alongside SMServerFin.
+	Defines SMClientFin, which is the Client side that connects to the server. This is functionally what the users directly interact with. Effectively replaces the old Main method alongside SMServerFin. Testing should be done manually as described below.
 
 SMCli2:
 	Just a copy of SMClientFin for the purpose of easily running two clients at once.
