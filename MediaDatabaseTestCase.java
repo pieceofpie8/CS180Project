@@ -73,7 +73,8 @@ public class MediaDatabaseTestCase {
             testerAccount.add("Tom,NoClue,false::");
             assertEquals(testerAccount, media.getAccounts());
         }
-        // test are the same when compared
+        // test are the same when compared, the reason they are different is that creating an Account takes the
+        // other parameters off, which is then given back in the getAccounts() method
 
         @Test public void testOutputAccountsSave() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");
