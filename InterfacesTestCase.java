@@ -1,7 +1,19 @@
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+
+/**
+ * CS 180 Group Project - InterfacesTestCase
+ *
+ * Defines InterfacesTestCase, which calls InterfacesTestMain and compares the output to an
+ * expected output. Basically just tests to make sure interfaces are implemented correctly.
+ */
 
 public class InterfacesTestCase {
 
@@ -40,7 +52,9 @@ public class InterfacesTestCase {
     public void testInterfaces() {
         String input = "";
         String expected = "Account correctly implements AccountInterface\n" +
-                "MediaDatabase correctly implements MediaDatabaseInterface\n";
+                "MediaDatabase correctly implements MediaDatabaseInterface\n" +
+                "SMClientFin correctly implements SMClientFinInterface\n" +
+                "SMServerFin correctly implements SMServerFinInterface\n";
 
         receiveInput(input);
         InterfacesTestMain.main(new String[0]);

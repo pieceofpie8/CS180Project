@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * CS 180 Group Project - SMClientFin
+ * CS 180 Group Project - SMCli2
  *
- * Defines SMClientFin, which is the Client side that connects to the server. This is
- * functionally what the users directly interact with.
+ * Defines SMCli2, which is just a copy of SMClientFin for the purpose of testing having
+ * multiple users on the program at once.
  */
 
-public class SMClientFin implements SMClientFinInterface {
+public class SMCli2 implements SMClientFinInterface {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12346;
 

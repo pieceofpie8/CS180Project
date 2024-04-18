@@ -5,7 +5,14 @@ import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SMServerFin {
+/**
+ * CS 180 Group Project - SMServerFin
+ *
+ * Defines SMServerFin, which is the Server that connects to multiple clients and
+ * does the processing of data.
+ */
+
+public class SMServerFin implements SMClientFinInterface {
     private static final int PORT = 12346;
     private static ExecutorService pool = Executors.newFixedThreadPool(10);
 

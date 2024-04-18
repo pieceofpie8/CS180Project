@@ -65,20 +65,16 @@ public class MediaDatabaseTestCase {
             media.setAccounts(newAccounts);
             assertEquals(true, media.readAccountsSave());
             assertNotNull(media.getAccounts());
-            ArrayList<Account> testAccounts =  new ArrayList<Account>();
-            Account friend1 = new Account("John,Password123,true:Alice:Rand");
-            Account friend2 = new Account("Alice,newPassword8,true:John,Amy:");
-            Account friend3 = new Account("Rand,somethingHere,true:Amy,Tom:");
-            Account friend4 = new Account("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
-            Account friend5 = new Account("Tom,NoClue,false::");
-            testAccounts.add(friend1);
-            testAccounts.add(friend2);
-            testAccounts.add(friend3);
-            testAccounts.add(friend4);
-            testAccounts.add(friend5);
-            assertEquals(testAccounts, media.getAccounts());
+            ArrayList<String> testerAccount = new ArrayList();
+            testerAccount.add("John,Password123,true:Alice:Rand");
+            testerAccount.add("Alice,newPassword8,true:John,Amy:");
+            testerAccount.add("Rand,somethingHere,true:Amy,Tom:");
+            testerAccount.add("Amy,outOfIdeas,true:Alice,Rand:Tom,John");
+            testerAccount.add("Tom,NoClue,false::");
+            assertEquals(testerAccount, media.getAccounts());
         }
-        // test are the same when compared
+        // test are the same when compared, the reason they are different is that creating an Account takes the
+        // other parameters off, which is then given back in the getAccounts() method
 
         @Test public void testOutputAccountsSave() {
             MediaDatabase media = new MediaDatabase("inputAccountSaveFile.txt", "inputDirectMessageFile.txt");

@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * CS 180 Group Project - MediaDatabase
+ *
+ * Defines the MediaDatabase class. The MediaDatabase class is used to make a
+ * MediaDatabase object that contains all the data for the social media program.
+ * additionally it has a number of functions for altering the data in the database
+ */
+
 public class MediaDatabase implements MediaDatabaseInterface {
     private ArrayList<Account> accounts;
     private String accountsSaveFile;
@@ -270,9 +278,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
     public ArrayList<String> getDirectMessageFiles() {
         return directMessageFiles;
     }
-
-    @Override
-    public void setAccounts(ArrayList<Account> accounts) {
+     public void setAccounts(ArrayList<Account> accounts) {
         this.accounts = accounts;
     }
 }
