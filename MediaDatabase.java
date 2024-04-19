@@ -154,10 +154,20 @@ public class MediaDatabase implements MediaDatabaseInterface {
     public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message)
     throws InvalidTargetException {
         try {
-            if (target.getFriendsOnly() && !target.getFriends().contains(sender)) {
+            String senderName = sender.getName();
+            ArrayList<String> targetFriends = new ArrayList<>();
+            for (int i = 0; i < target.getFriends().size(); i++) {
+                targetFriends.add(target.getFriends().get(i).getName());
+            }
+            ArrayList<String> targetBlocked = new ArrayList<>();
+            for (int i = 0; i < target.getBlocked().size(); i++) {
+                targetBlocked.add(target.getBlocked().get(i).getName());
+            }
+
+            if (target.getFriendsOnly() && !targetFriends.contains(senderName)) {
                 throw new InvalidTargetException("Target accepts messages from friends only.");
             }
-            if (target.getBlocked().contains(sender)) {
+            if (targetBlocked.contains(senderName)) {
                 throw new InvalidTargetException("Target has you blocked");
             }
 
@@ -277,8 +287,5 @@ public class MediaDatabase implements MediaDatabaseInterface {
     }
     public ArrayList<String> getDirectMessageFiles() {
         return directMessageFiles;
-    }
-     public void setAccounts(ArrayList<Account> accounts) {
-        this.accounts = accounts;
     }
 }

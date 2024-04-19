@@ -113,17 +113,25 @@ public class SMServerFin implements SMClientFinInterface {
                         String friendsOnly = in.readLine();
 
                         if (friendsOnly.equals(";")) {
-                            //do nothing
+                            out.write("Invalid Input");
+                            out.println();
+                            out.flush();
                         } else if (friendsOnly.equals("true")) {
                             logIn.setFriendsOnly(true);
                             synchronized (lock) {
                                 mediaDatabase.alterAccount(logIn.getName(), logIn);
                             }
+                            out.write("Friends Only changed");
+                            out.println();
+                            out.flush();
                         } else {
                             logIn.setFriendsOnly(false);
                             synchronized (lock) {
                                 mediaDatabase.alterAccount(logIn.getName(), logIn);
                             }
+                            out.write("Friends Only changed");
+                            out.println();
+                            out.flush();
                         }
 
                         continue;
