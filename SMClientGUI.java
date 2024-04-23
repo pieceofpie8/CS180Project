@@ -283,8 +283,11 @@ public class SMClientGUI extends JComponent implements Runnable, SMClientGUIInte
                         || createPassword.getText().isEmpty()
                         || createFriendsOnly.getText().isEmpty()
                         || createUsername.getText().contains(",")
+                        || createUsername.getText().contains(":")
                         || createPassword.getText().contains(",")
-                        || createFriendsOnly.getText().contains(",")) {
+                        || createPassword.getText().contains(":")
+                        || createFriendsOnly.getText().contains(",")
+                        || createFriendsOnly.getText().contains(":")) {
                     createUsername.setText("Username");
                     createPassword.setText("Password");
                     createFriendsOnly.setText("true/false");
