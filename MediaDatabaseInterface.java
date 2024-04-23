@@ -48,5 +48,4 @@ public interface MediaDatabaseInterface {
     public String getAccountsSaveFile();
     public String getDirectMessageFileNamesFile();
     public ArrayList<String> getDirectMessageFiles();
-    public void setAccounts(ArrayList<Account> accounts);
 }

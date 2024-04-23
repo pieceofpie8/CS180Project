@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
  * does the processing of data.
  */
 
-public class SMServerFin implements SMClientFinInterface {
+public class SMServerFin implements SMServerFinInterface {
     private static final int PORT = 12346;
     private static ExecutorService pool = Executors.newFixedThreadPool(10);
 

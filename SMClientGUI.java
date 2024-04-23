@@ -18,7 +18,7 @@ import java.util.Scanner;
  * for user input, but still functionally works the same as the previous user interfaces.
  */
 
-public class SMClientGUI extends JComponent implements Runnable {
+public class SMClientGUI extends JComponent implements Runnable, SMClientGUIInterface {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12346;
 

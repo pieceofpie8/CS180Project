@@ -1,367 +1,78 @@
-import java.io.*;
-import java.net.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * CS 180 Group Project - SMCli2
  *
- * Defines SMCli2, which is just a copy of SMClientFin for the purpose of testing having
+ * Defines SMCli2, which is just a copy of SMClientGUI for the purpose of testing having
  * multiple users on the program at once.
  */
 
-public class SMCli2 implements SMClientFinInterface {
+public class SMCli2 extends JComponent implements Runnable, SMClientGUIInterface {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12346;
 
+    private Socket socket;
+    private PrintWriter out;
+    private BufferedReader in;
+
+
+    JButton loginButton;         // button to enter information
+    JTextField loginUsername;    // text field for input
+    JTextField loginPassword;    // text field for input
+
+    JButton createButton;         // button to enter information
+    JTextField createUsername;    // text field for input
+    JTextField createPassword;    // text field for input
+    JTextField createFriendsOnly; // text field for input
+
+    JButton changeFOButton;       // button to enter information
+    JTextField changeFOText;      // text field for input
+    JButton addFriendButton;      // button to enter information
+    JTextField addFriendText;     // text field for input
+    JButton removeFriendButton;   // button to enter information
+    JTextField removeFriendText;  // text field for input
+    JButton addBlockedButton;      // button to enter information
+    JTextField addBlockedText;     // text field for input
+    JButton removeBlockedButton;   // button to enter information
+    JTextField removeBlockedText;  // text field for input
+
+    JButton accessDM;               // button for opening DM menu
+    JButton exit;                   // exit button
+
+    JButton dmStart;                // button to enter information
+    JTextField dmStartTarget;       // text field for input
+    JButton dmRead;                 // button to enter information
+    JTextField dmReadTarget;        // text field for input
+    JButton dmWrite;                 // button to enter information
+    JTextField dmWriteTarget;        // text field for input
+    JTextField dmWriteMessage;       // text field for input
+    JButton dmRemove;                // button to enter information
+    JTextField dmRemoveTarget;       // text field for input
+    JTextField dmRemoveIndex;        // text field for input
+
+    JTextArea messagesText;             // block of text for messages
+    JButton exitFromMessages;        // return to main menu from DM messages
+
+    public SMCli2() throws IOException {
+        socket = new Socket(SERVER_IP, SERVER_PORT);
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    }
+
     public static void main(String[] args) {
-        try (
-                Socket socket = new Socket(SERVER_IP, SERVER_PORT);
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                Scanner scan = new Scanner(System.in);
-        ) {
-            System.out.println("Connected to server...");
+        try {
 
-
-            while (true) {
-                System.out.println("Would you like to log in (1) or create an account (2)?");
-                String logOrCreateString = scan.nextLine();
-                boolean logOrCreateCheck = false;
-                int logOrCreate = 0;
-                try {
-                    logOrCreate = Integer.parseInt(logOrCreateString);
-                    if (logOrCreate == 1 || logOrCreate == 2) {
-                        logOrCreateCheck = true;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid selection");
-                    continue;
-                }
-
-                if (logOrCreateCheck) {
-                    if (logOrCreate == 1) {             //log in
-                        //to server
-                        out.write("1");
-                        out.println();
-                        out.flush();
-
-                        System.out.println("Enter Username:");
-                        String username = scan.nextLine();
-                        System.out.println("Enter Password:");
-                        String password = scan.nextLine();
-                        if (username.contains(":") || username.contains(",")
-                                || password.contains(":") || password.contains(",")) {
-                            System.out.println("Invalid selection, no ':' or ','");
-
-                            //to server. INVALID
-                            out.write(":,:");
-                            out.println();
-                            out.flush();
-
-                            continue;
-                        } else {
-
-                            //to server. VALID
-                            out.write(username + "," + password);
-                            out.println();
-                            out.flush();
-
-                            String response = in.readLine();
-                            System.out.println(response);
-                            if (!response.equals("Logged in!")) {
-                                continue;
-                            }
-                        }
-
-                    } else {                            //create account
-                        //to server
-                        out.write("2");
-                        out.println();
-                        out.flush();
-
-                        System.out.println("Make Username:");
-                        String newUsername = scan.nextLine();
-                        System.out.println("Make Password:");
-                        String newPassword = scan.nextLine();
-                        System.out.println("Friends Only for messages? (true/false)");
-                        String friendsOnly = scan.nextLine();
-                        if (!friendsOnly.equals("true") && !friendsOnly.equals("false")) {
-                            System.out.println("Invalid selection, only true or false.");
-
-                            //to server. INVALID
-                            out.write(":,:,:");
-                            out.println();
-                            out.flush();
-
-                            continue;
-                        }
-                        if (newUsername.contains(":") || newUsername.contains(",")
-                                || newPassword.contains(":") || newPassword.contains(",")) {
-                            System.out.println("Invalid selection, no ':' or ','");
-
-                            //to server. INVALID
-                            out.write(":,:,:");
-                            out.println();
-                            out.flush();
-
-                            continue;
-                        } else {
-
-                            //to server. VALID
-                            out.write(newUsername + "," + newPassword + "," + friendsOnly);
-                            out.println();
-                            out.flush();
-
-                            String response = in.readLine();
-                            System.out.println(response);
-                            if (!response.equals("Account created!")) {
-                                continue;
-                            }
-                        }
-                    }
-                } else {
-                    continue;
-                }
-
-                break;
-            }
-
-
-            //MENU:
-            while (true) {
-                System.out.println("What would you like to do?\n(1)Change FriendsOnly\n(2)Add a friend" +
-                        "\n(3)Remove a friend\n(4)Add blocked\n(5)Remove blocked\n(6)Access a DM\n(7)exit");
-                String menuString = scan.nextLine();
-                int menu = 0;
-                try {
-                    menu = Integer.parseInt(menuString);
-                    if (menu != 1 && menu != 2 && menu != 3 && menu != 4
-                            && menu != 5 && menu != 6 && menu != 7) {
-                        System.out.println("Invalid number");
-                        continue;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid selection");
-                    continue;
-                }
-
-                out.write(menuString);
-                out.println();
-                out.flush();
-
-                if (menu == 1) {
-                    System.out.println("Friends Only for messages? (true/false)");
-                    String friendsOnly = scan.nextLine();
-                    if (!friendsOnly.equals("true") && !friendsOnly.equals("false")) {
-                        System.out.println("Invalid selection, only true or false.");
-
-                        //to server. INVALID
-                        out.write(";");
-                        out.println();
-                        out.flush();
-
-                        continue;
-                    } else {
-                        //to server. VALID
-                        out.write(friendsOnly);
-                        out.println();
-                        out.flush();
-
-                        continue;
-                    }
-                }
-
-                if (menu == 2) {
-                    System.out.println("Who are you adding as a friend?");
-                    String newFriend = scan.nextLine();
-
-                    //to server. VALID
-                    out.write(newFriend);
-                    out.println();
-                    out.flush();
-
-                    String response = in.readLine();
-                    System.out.println(response);
-                    continue;
-                }
-
-                if (menu == 3) {
-                    System.out.println("Who are removing as a friend?");
-                    String removeFriend = scan.nextLine();
-
-                    //to server. VALID
-                    out.write(removeFriend);
-                    out.println();
-                    out.flush();
-
-                    String response = in.readLine();
-                    System.out.println(response);
-                    continue;
-                }
-
-                if (menu == 4) {
-                    System.out.println("Who are you blocking?");
-                    String newBlocked = scan.nextLine();
-
-                    //to server. VALID
-                    out.write(newBlocked);
-                    out.println();
-                    out.flush();
-
-                    String response = in.readLine();
-                    System.out.println(response);
-                    continue;
-                }
-
-                if (menu == 5) {
-                    System.out.println("Who are removing from blocked?");
-                    String removeBlocked = scan.nextLine();
-
-                    //to server. VALID
-                    out.write(removeBlocked);
-                    out.println();
-                    out.flush();
-
-                    String response = in.readLine();
-                    System.out.println(response);
-                    continue;
-                }
-
-                if (menu == 6) {
-
-                    System.out.println("What are you doing?\n(1)Starting a DM\n(2)Reading DMs" +
-                            "\n(3)Sending a DM\n(4)Deleting a DM");
-                    String dmMenuString = scan.nextLine();
-                    int dmMenu = 0;
-                    try {
-                        dmMenu = Integer.parseInt(dmMenuString);
-                        if (dmMenu != 1 && dmMenu != 2 && dmMenu != 3 && dmMenu != 4) {
-                            System.out.println("Invalid number");
-
-                            //to server. INVALID
-                            out.write(";");
-                            out.println();
-                            out.flush();
-
-                            continue;
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid selection");
-
-                        //to server. INVALID
-                        out.write(";");
-                        out.println();
-                        out.flush();
-
-                        continue;
-                    }
-
-                    //to server. VALID
-                    out.write(dmMenuString);
-                    out.println();
-                    out.flush();
-
-                    if (dmMenu == 1) {
-                        System.out.println("Who are you starting a DM with?");
-                        String dmStartTargetName = scan.nextLine();
-
-                        //to server. VALID
-                        out.write(dmStartTargetName);
-                        out.println();
-                        out.flush();
-
-                        String response = in.readLine();
-                        System.out.println(response);
-                        continue;
-                    }
-
-                    if (dmMenu == 2) {
-                        System.out.println("Who are you reading DMs with?");
-                        String dmReadTargetName = scan.nextLine();
-
-                        //to server. VALID
-                        out.write(dmReadTargetName);
-                        out.println();
-                        out.flush();
-
-                        String response = in.readLine();
-                        System.out.println(response);
-
-                        if (response.equals("Success!")) {
-                            String strLength = in.readLine();
-                            int messagesLength = Integer.parseInt(strLength);
-
-                            for (int i = 0; i < messagesLength; i++) {
-                                String message = in.readLine();
-                                System.out.println(message);
-                            }
-                        }
-
-                        continue;
-                    }
-
-                    if (dmMenu == 3) {
-                        System.out.println("Who are you sending a DM to?");
-                        String dmSendTargetName = scan.nextLine();
-
-                        //to server. VALID
-                        out.write(dmSendTargetName);
-                        out.println();
-                        out.flush();
-
-                        String response = in.readLine();
-                        System.out.println(response);
-
-                        if (response.equals("Enter Message:")) {
-                            String message = scan.nextLine();
-
-                            //to server. VALID
-                            out.write(message);
-                            out.println();
-                            out.flush();
-
-                            String response2 = in.readLine();
-                            System.out.println(response2);
-                        }
-                        continue;
-                    }
-
-                    if (dmMenu == 4) {
-                        System.out.println("Who are you removing a DM to?");
-                        String dmRemoveTargetName = scan.nextLine();
-
-                        //to server. VALID
-                        out.write(dmRemoveTargetName);
-                        out.println();
-                        out.flush();
-
-                        String response = in.readLine();
-                        System.out.println(response);
-
-                        if (response.equals("Enter Index of Message to remove:")) {
-                            String indexRemove = scan.nextLine();
-
-                            //to server. VALID
-                            out.write(indexRemove);
-                            out.println();
-                            out.flush();
-
-                            String response2 = in.readLine();
-                            System.out.println(response2);
-                        }
-                        continue;
-                    }
-
-                    //end of DM Menu
-                }
-
-                if (menu == 7) {
-                    System.out.println("Bye");
-                    break;
-                }
-            }
-
+            SwingUtilities.invokeLater(new SMClientGUI());
 
         } catch (UnknownHostException e) {
             System.err.println("Unknown host " + SERVER_IP);
@@ -370,5 +81,941 @@ public class SMCli2 implements SMClientFinInterface {
             System.err.println("Error connecting to the server");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void run() {
+        //content:
+
+        JFrame frame = new JFrame();
+        frame.setTitle("Social Media App");
+
+        Container content = frame.getContentPane();
+        content.setLayout(new BorderLayout(3, 3));
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);         //handled by window listener
+        frame.setVisible(true);
+
+        WindowListener exitCommand = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // by sending 7, as long as the user is in the program, they will
+                // reach the exit command in the server.
+                String menuSelection = "7";
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+
+                frame.dispose();
+            }
+        };
+        frame.addWindowListener(exitCommand);
+
+        loginUsername = new JTextField("Username", 10);
+        loginPassword = new JTextField("Password", 10);
+        JLabel filler = new JLabel("  ");
+        loginButton = new JButton("Login");
+
+        createUsername = new JTextField("New Username", 10);
+        createPassword = new JTextField("New Username", 10);
+        createFriendsOnly = new JTextField("true/false", 5);
+        createButton = new JButton("Create Account");
+
+        changeFOButton = new JButton("Change Friends-Only");
+        changeFOText = new JTextField("true/false", 5);
+
+        addFriendButton = new JButton("Add Friend");
+        addFriendText = new JTextField("new friend", 10);
+        removeFriendButton = new JButton("Remove Friend");
+        removeFriendText = new JTextField("old friend", 10);
+        addBlockedButton = new JButton("Add Blocked");
+        addBlockedText = new JTextField("new blocked", 10);
+        removeBlockedButton = new JButton("Remove Blocked");
+        removeBlockedText = new JTextField("old blocked", 10);
+
+        accessDM = new JButton("Access DMs");
+        exit = new JButton("exit");
+
+        dmStart = new JButton("Start DMs");
+        dmStartTarget = new JTextField("target", 10);
+        dmRead = new JButton("Read DMs");
+        dmReadTarget = new JTextField("target", 10);
+        dmWrite = new JButton("Write DM");
+        dmWriteTarget = new JTextField("target", 10);
+        dmWriteMessage = new JTextField("message", 20);
+        dmRemove = new JButton("Remove DM");
+        dmRemoveTarget = new JTextField("target", 10);
+        dmRemoveIndex = new JTextField("target", 5);
+        JLabel filler1 = new JLabel("  ");
+        JLabel filler2 = new JLabel("  ");
+
+        exitFromMessages = new JButton("Continue");
+        messagesText = new JTextArea("");
+        messagesText.setEditable(false);
+        JScrollPane messageBox = new JScrollPane(messagesText);
+        messageBox.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+
+        JPanel menu1 = new JPanel();
+        menu1.setLayout(new GridLayout(2,4));
+        menu1.add(loginUsername);
+        menu1.add(loginPassword);
+        menu1.add(filler);
+        menu1.add(loginButton);
+
+        menu1.add(createUsername);
+        menu1.add(createPassword);
+        menu1.add(createFriendsOnly);
+        menu1.add(createButton);
+
+        JPanel borderN = new JPanel();
+        JLabel fillerN = new JLabel("    ");
+        borderN.add(fillerN);
+        JPanel responseBox = new JPanel();
+        JLabel fillerS = new JLabel("    ");
+        responseBox.add(fillerS);
+        JPanel borderE = new JPanel();
+        JLabel fillerE = new JLabel("    ");
+        borderE.add(fillerE);
+        JPanel borderW = new JPanel();
+        JLabel fillerW = new JLabel("    ");
+        borderW.add(fillerW);
+
+        content.add(borderN, BorderLayout.NORTH);
+        content.add(responseBox, BorderLayout.SOUTH);
+        content.add(borderE, BorderLayout.EAST);
+        content.add(borderW, BorderLayout.WEST);
+        content.add(menu1, BorderLayout.CENTER);
+
+
+        //menu1 actions:
+
+        loginButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (loginUsername.getText().isEmpty()
+                        || loginPassword.getText().isEmpty()
+                        || loginUsername.getText().contains(",")
+                        || loginPassword.getText().contains(",")) {
+                    loginUsername.setText("Username");
+                    loginPassword.setText("Password");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "1";
+                    String username = loginUsername.getText();
+                    String password = loginPassword.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(username + "," + password);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel(response);
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+
+                    if (response.equals("Logged in!")) {
+
+                        menu1.removeAll();
+                        menu1.setLayout(new GridLayout(6,2));
+
+                        menu1.add(changeFOText);
+                        menu1.add(changeFOButton);
+                        menu1.add(addFriendText);
+                        menu1.add(addFriendButton);
+                        menu1.add(removeFriendText);
+                        menu1.add(removeFriendButton);
+                        menu1.add(addBlockedText);
+                        menu1.add(addBlockedButton);
+                        menu1.add(removeBlockedText);
+                        menu1.add(removeBlockedButton);
+                        menu1.add(accessDM);
+                        menu1.add(exit);
+
+                        menu1.revalidate();
+                        menu1.repaint();
+
+                    } else {
+                        loginUsername.setText("Username");
+                        loginPassword.setText("Password");
+                    }
+                }
+            }
+        });
+
+        createButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (createUsername.getText().isEmpty()
+                        || createPassword.getText().isEmpty()
+                        || createFriendsOnly.getText().isEmpty()
+                        || createUsername.getText().contains(",")
+                        || createPassword.getText().contains(",")
+                        || createFriendsOnly.getText().contains(",")) {
+                    createUsername.setText("Username");
+                    createPassword.setText("Password");
+                    createFriendsOnly.setText("true/false");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "2";
+                    String username = createUsername.getText();
+                    String password = createPassword.getText();
+                    String friendsOnly = createFriendsOnly.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(username + "," + password + "," + friendsOnly);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel(response);
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    if (response.equals("Account created!")) {
+
+                        menu1.removeAll();
+                        menu1.setLayout(new GridLayout(6,2));
+
+                        menu1.add(changeFOText);
+                        menu1.add(changeFOButton);
+                        menu1.add(addFriendText);
+                        menu1.add(addFriendButton);
+                        menu1.add(removeFriendText);
+                        menu1.add(removeFriendButton);
+                        menu1.add(addBlockedText);
+                        menu1.add(addBlockedButton);
+                        menu1.add(removeBlockedText);
+                        menu1.add(removeBlockedButton);
+                        menu1.add(accessDM);
+                        menu1.add(exit);
+
+                        menu1.revalidate();
+                        menu1.repaint();
+
+                    } else {
+                        createUsername.setText("Username");
+                        createPassword.setText("Password");
+                        createFriendsOnly.setText("true/false");
+                    }
+                }
+
+            }
+        });
+
+        //menu 2 buttons:
+
+        changeFOButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (!changeFOText.getText().equals("true")
+                        && !changeFOText.getText().equals("false")) {
+                    changeFOText.setText("true/false");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "1";
+                    String changeFO = changeFOText.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(changeFO);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+                }
+
+            }
+        });
+
+        addFriendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (addFriendText.getText().isEmpty()
+                        || addFriendText.getText().contains(",")) {
+                    addFriendText.setText("new friend");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "2";
+                    String newFriend = addFriendText.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(newFriend);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+                }
+
+            }
+        });
+
+        removeFriendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (removeFriendText.getText().isEmpty()
+                        || removeFriendText.getText().contains(",")) {
+                    removeFriendText.setText("old friend");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "3";
+                    String oldFriend = removeFriendText.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(oldFriend);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+                }
+
+            }
+        });
+
+        addBlockedButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (addBlockedText.getText().isEmpty()
+                        || addBlockedText.getText().contains(",")) {
+                    addBlockedText.setText("new blocked");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "4";
+                    String newBlocked = addBlockedText.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(newBlocked);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+                }
+
+            }
+        });
+
+        removeBlockedButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (removeBlockedText.getText().isEmpty()
+                        || removeBlockedText.getText().contains(",")) {
+                    removeBlockedText.setText("old friend");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                } else {
+                    String menuSelection = "5";
+                    String oldBlocked = removeBlockedText.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(oldBlocked);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+                }
+
+            }
+        });
+
+        accessDM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String menuSelection = "6";
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+
+                menu1.removeAll();
+                menu1.setLayout(new GridLayout(4,3));
+
+                menu1.add(dmStartTarget);
+                menu1.add(filler1);
+                menu1.add(dmStart);
+                menu1.add(dmReadTarget);
+                menu1.add(filler2);
+                menu1.add(dmRead);
+                menu1.add(dmWriteTarget);
+                menu1.add(dmWriteMessage);
+                menu1.add(dmWrite);
+                menu1.add(dmRemoveTarget);
+                menu1.add(dmRemoveIndex);
+                menu1.add(dmRemove);
+
+                menu1.revalidate();
+                menu1.repaint();
+            }
+        });
+
+        exit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String menuSelection = "7";
+                out.write(menuSelection);
+                out.println();
+                out.flush();
+
+                frame.dispose();
+            }
+        });
+
+        //menu 3:
+
+        dmStart.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (dmStartTarget.getText().isEmpty()
+                        || dmStartTarget.getText().contains(",")) {
+                    dmStartTarget.setText("target");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+
+                } else {
+                    String menuSelection = "1";
+                    String target = dmStartTarget.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(target);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+                }
+
+            }
+        });
+
+        dmRead.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (dmReadTarget.getText().isEmpty()
+                        || dmReadTarget.getText().contains(",")) {
+                    dmReadTarget.setText("target");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+
+                } else {
+                    String menuSelection = "2";
+                    String target = dmReadTarget.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(target);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    responseBox.removeAll();
+                    JLabel generalResponse = new JLabel(response);
+                    responseBox.add(generalResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    if (response.equals("Success!")) {
+                        menu1.removeAll();
+                        menu1.setLayout(new GridLayout(2,1));
+
+                        String strLength;
+                        try {
+                            strLength = in.readLine();
+                        } catch (IOException e1) {
+                            strLength = "0";
+                        }
+                        int messagesLength = Integer.parseInt(strLength);
+
+                        StringBuilder messages = new StringBuilder();
+                        for (int i = 0; i < messagesLength; i++) {
+                            String message;
+                            try {
+                                message = in.readLine();
+                            } catch (IOException e1) {
+                                message = "Connection Error";
+                            }
+                            messages.append(message).append("\n");
+                        }
+
+                        messagesText.setText(String.valueOf(messages));
+                        messagesText.revalidate();
+                        messagesText.repaint();
+                        messageBox.revalidate();
+                        messageBox.repaint();
+
+                        menu1.add(messageBox);
+                        menu1.add(exitFromMessages);
+                        menu1.revalidate();
+                        menu1.repaint();
+
+                    } else {
+                        menu1.removeAll();
+                        menu1.setLayout(new GridLayout(6,2));
+
+                        menu1.add(changeFOText);
+                        menu1.add(changeFOButton);
+                        menu1.add(addFriendText);
+                        menu1.add(addFriendButton);
+                        menu1.add(removeFriendText);
+                        menu1.add(removeFriendButton);
+                        menu1.add(addBlockedText);
+                        menu1.add(addBlockedButton);
+                        menu1.add(removeBlockedText);
+                        menu1.add(removeBlockedButton);
+                        menu1.add(accessDM);
+                        menu1.add(exit);
+
+                        menu1.revalidate();
+                        menu1.repaint();
+                    }
+
+                }
+            }
+        });
+
+        exitFromMessages.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu1.removeAll();
+                menu1.setLayout(new GridLayout(6,2));
+
+                menu1.add(changeFOText);
+                menu1.add(changeFOButton);
+                menu1.add(addFriendText);
+                menu1.add(addFriendButton);
+                menu1.add(removeFriendText);
+                menu1.add(removeFriendButton);
+                menu1.add(addBlockedText);
+                menu1.add(addBlockedButton);
+                menu1.add(removeBlockedText);
+                menu1.add(removeBlockedButton);
+                menu1.add(accessDM);
+                menu1.add(exit);
+
+                menu1.revalidate();
+                menu1.repaint();
+            }
+        });
+
+        dmWrite.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (dmWriteTarget.getText().isEmpty()
+                        || dmWriteTarget.getText().contains(",")
+                        || dmWriteMessage.getText().isEmpty()) {
+                    dmWriteTarget.setText("target");
+                    dmWriteMessage.setText("message");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+
+                } else {
+                    String menuSelection = "3";
+                    String target = dmWriteTarget.getText();
+                    String message = dmWriteMessage.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(target);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    if (response.equals("Enter Message:")) {
+                        out.write(message);
+                        out.println();
+                        out.flush();
+
+                        String response2;
+                        try {
+                            response2 = in.readLine();
+                        } catch (IOException e1) {
+                            response2 = "Connection Error";
+                        }
+
+                        responseBox.removeAll();
+                        JLabel generalResponse = new JLabel(response2);
+                        responseBox.add(generalResponse);
+                        content.revalidate();
+                        content.repaint();
+                    } else {
+                        responseBox.removeAll();
+                        JLabel generalResponse = new JLabel(response);
+                        responseBox.add(generalResponse);
+                        content.revalidate();
+                        content.repaint();
+                    }
+
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+                }
+
+            }
+        });
+
+        dmRemove.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //check empty
+                if (dmRemoveTarget.getText().isEmpty()
+                        || dmRemoveTarget.getText().contains(",")) {
+                    dmRemoveTarget.setText("target");
+
+                    responseBox.removeAll();
+                    JLabel loginResponse = new JLabel("Invalid Input");
+                    responseBox.add(loginResponse);
+                    content.revalidate();
+                    content.repaint();
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+
+                } else {
+                    String menuSelection = "4";
+                    String target = dmRemoveTarget.getText();
+                    String index = dmRemoveIndex.getText();
+
+                    out.write(menuSelection);
+                    out.println();
+                    out.flush();
+                    out.write(target);
+                    out.println();
+                    out.flush();
+
+                    String response;
+                    try {
+                        response = in.readLine();
+                    } catch (IOException e1) {
+                        response = "Connection Error";
+                    }
+
+                    if (response.equals("Enter Index of Message to remove:")) {
+                        out.write(index);
+                        out.println();
+                        out.flush();
+
+                        String response2;
+                        try {
+                            response2 = in.readLine();
+                        } catch (IOException e1) {
+                            response2 = "Connection Error";
+                        }
+
+                        responseBox.removeAll();
+                        JLabel generalResponse = new JLabel(response2);
+                        responseBox.add(generalResponse);
+                        content.revalidate();
+                        content.repaint();
+                    } else {
+                        responseBox.removeAll();
+                        JLabel generalResponse = new JLabel(response);
+                        responseBox.add(generalResponse);
+                        content.revalidate();
+                        content.repaint();
+                    }
+
+                    menu1.removeAll();
+                    menu1.setLayout(new GridLayout(6,2));
+
+                    menu1.add(changeFOText);
+                    menu1.add(changeFOButton);
+                    menu1.add(addFriendText);
+                    menu1.add(addFriendButton);
+                    menu1.add(removeFriendText);
+                    menu1.add(removeFriendButton);
+                    menu1.add(addBlockedText);
+                    menu1.add(addBlockedButton);
+                    menu1.add(removeBlockedText);
+                    menu1.add(removeBlockedButton);
+                    menu1.add(accessDM);
+                    menu1.add(exit);
+
+                    menu1.revalidate();
+                    menu1.repaint();
+                }
+
+            }
+        });
+
     }
 }

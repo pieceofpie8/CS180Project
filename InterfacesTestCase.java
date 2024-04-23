@@ -13,6 +13,8 @@ import java.io.PrintStream;
  *
  * Defines InterfacesTestCase, which calls InterfacesTestMain and compares the output to an
  * expected output. Basically just tests to make sure interfaces are implemented correctly.
+ *
+ * IMPORTANT: must have an instance of SMServerFin running for the test case to work!!!
  */
 
 public class InterfacesTestCase {
@@ -53,8 +55,8 @@ public class InterfacesTestCase {
         String input = "";
         String expected = "Account correctly implements AccountInterface\n" +
                 "MediaDatabase correctly implements MediaDatabaseInterface\n" +
-                "SMClientFin correctly implements SMClientFinInterface\n" +
-                "SMServerFin correctly implements SMServerFinInterface\n";
+                "SMServerFin correctly implements SMServerFinInterface\n" +
+                "SMClientGUI correctly implements SMClientGUIInterface\n";
 
         receiveInput(input);
         InterfacesTestMain.main(new String[0]);

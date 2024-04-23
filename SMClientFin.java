@@ -10,7 +10,7 @@ import java.util.Scanner;
  * functionally what the users directly interact with.
  */
 
-public class SMClientFin implements SMClientFinInterface {
+public class SMClientFin implements SMClientGUIInterface {
     private static final String SERVER_IP = "localhost";
     private static final int SERVER_PORT = 12346;
 

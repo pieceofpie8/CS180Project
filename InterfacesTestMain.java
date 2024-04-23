@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -74,38 +75,6 @@ public class InterfacesTestMain {
             System.out.println("MediaDatabase does not implement MediaDatabaseInterface");
         }
 
-        //test SMClientFin
-        SMClientFin client = new SMClientFin();
-        if (client instanceof SMClientFin) {
-
-            Method[] clientMethods = SMClientFin.class.getDeclaredMethods();
-            Method[] clientInterfaceMethods = SMClientFinInterface.class.getDeclaredMethods();
-
-            //swapping interface methods
-            for (int i = 0; i < clientInterfaceMethods.length; i++) {
-                int holdCount = 0;
-
-                //swapping client methods
-                for (int j = 0; j < clientMethods.length; j++) {
-                    if (clientInterfaceMethods[i].getName().equals(clientMethods[j].getName())
-                            && Arrays.equals(clientInterfaceMethods[i].getParameterTypes(),
-                            clientMethods[j].getParameterTypes())) {
-                        holdCount++;
-                    }
-                }
-
-                if (holdCount != 1) {
-                    System.out.println("SMClientFin does not correctly implement SMClientFinInterface");
-                    break;
-                }
-            }
-
-            System.out.println("SMClientFin correctly implements SMClientFinInterface");
-
-        } else {
-            System.out.println("SMClientFin does not implement SMClientFinInterface");
-        }
-
         //test SMServerFin
         SMServerFin server = new SMServerFin();
         if (server instanceof SMServerFin) {
@@ -136,6 +105,42 @@ public class InterfacesTestMain {
 
         } else {
             System.out.println("SMServerFin does not implement SMServerFinInterface");
+        }
+
+        //test SMClientGUI
+        try {
+            SMClientGUI client = new SMClientGUI();
+            if (client instanceof SMClientGUI) {
+
+                Method[] clientMethods = SMClientGUI.class.getDeclaredMethods();
+                Method[] clientInterfaceMethods = SMClientGUIInterface.class.getDeclaredMethods();
+
+                //swapping interface methods
+                for (int i = 0; i < clientInterfaceMethods.length; i++) {
+                    int holdCount = 0;
+
+                    //swapping client methods
+                    for (int j = 0; j < clientMethods.length; j++) {
+                        if (clientInterfaceMethods[i].getName().equals(clientMethods[j].getName())
+                                && Arrays.equals(clientInterfaceMethods[i].getParameterTypes(),
+                                clientMethods[j].getParameterTypes())) {
+                            holdCount++;
+                        }
+                    }
+
+                    if (holdCount != 1) {
+                        System.out.println("SMClientGUI does not correctly implement SMClientGUIInterface");
+                        break;
+                    }
+                }
+
+                System.out.println("SMClientGUI correctly implements SMClientGUIInterface");
+
+            } else {
+                System.out.println("SMClientGUI does not implement SMClientGUIInterface");
+            }
+        }   catch (IOException e) {
+            System.out.println("SMClientGUI failure");
         }
     }
 }
