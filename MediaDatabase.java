@@ -152,7 +152,7 @@ public class MediaDatabase implements MediaDatabaseInterface {
     }
 
     public ArrayList<String> addMessage(ArrayList<String> messages, Account sender, Account target, String message)
-    throws InvalidTargetException {
+            throws InvalidTargetException {
         try {
             String senderName = sender.getName();
             ArrayList<String> targetFriends = new ArrayList<>();
@@ -287,5 +287,9 @@ public class MediaDatabase implements MediaDatabaseInterface {
     }
     public ArrayList<String> getDirectMessageFiles() {
         return directMessageFiles;
+    }
+
+    public void setAccounts(ArrayList<Account> accounts) {
+        this.accounts = accounts;
     }
 }
