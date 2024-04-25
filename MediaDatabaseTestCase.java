@@ -2,11 +2,15 @@ import org.junit.Test;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
 import java.io.*;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
+@RunWith(Enclosed.class)
 public class MediaDatabaseTestCase {
     public static class TestCase {
         private final PrintStream originalOutput = System.out;

@@ -3,3 +3,5 @@ Alice,newPassword8,true::
 Rand,somethingHere,true::
 Amy,outOfIdeas,true::
 Tom,NoClue,false::
+Candy,AwesomePassword23,true:Alice,Amy:Rand
+Candy,AwesomePassword23,true:Alice,Amy:Rand

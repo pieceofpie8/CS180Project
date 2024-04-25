@@ -132,7 +132,7 @@ public class SMClientGUI extends JComponent implements Runnable, SMClientGUIInte
         loginButton = new JButton("Login");
 
         createUsername = new JTextField("New Username", 10);
-        createPassword = new JTextField("New Username", 10);
+        createPassword = new JTextField("New Password", 10);
         createFriendsOnly = new JTextField("true/false", 5);
         createButton = new JButton("Create Account");
 
