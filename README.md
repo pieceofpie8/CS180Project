@@ -23,16 +23,17 @@ To run, type into the terminal: “java SMServerFin” to start the sever and "j
 
 ## NOTES:
 
-To add a blocked user as a friend or vice versa, first remove them from friends / blocked.
-Starting a DM is a necessary operation to make sure the file saves properly. A message can be sent without starting one, but it is not recommended.
-In order for the SMClientGUIInterface test to work an isntance of SMServerFin should be running in the background.
-In the presentation there was a small issue with the password section for creating an account saying "new username." This has since been fixed in the final result.
+-To add a blocked user as a friend or vice versa, first remove them from friends / blocked.
+-Starting a DM is a necessary operation to make sure the file saves properly. A message can be sent without starting one, but it is not recommended.
+-In order for the SMClientGUIInterface test to work an isntance of SMServerFin should be running in the background.
+-In the presentation there was a small issue with the password section for creating an account saying "new username." This has since been fixed in the final result.
+-When making an account it is recommended you exit out of the program and re-log in to ensure everything works fine.
 
 ## Submission:
 
 Submitted workspace on Vocareum by David Erb
 Submitted Report by Atharv
-Submitted Presentation by (insert here)
+Submitted Presentation by Jason
 
 # Classes:
 
@@ -100,4 +101,4 @@ Message files -
 # Manual Testing Instructions for IO:
 
 	Begin by running the server, then an instance of both SMClientGUI and SMCli2. Log into the app as John on SMClientGUI by typing the following lines as prompted in log in: "John", "Password123". Then send a message to Alice by doing the following: press access DMs, type "Alice" and "testing message" into send DMs and hit send DM. Then log into the app as Alice on SMCli2 by typing the following as prompted in log in: "Alice", "Password8". Then read messaged with John by doing the following: access DMs, "John" in read DMs target and press read DMs. You should see the original messages as well as the added "testing message". This shows that the IO is working properly as things are sent to the server, which updates the database.
-	Feel free to try some of the other commands as well by using the program as it instructs to be used when run. See the accountsSave.txt for existing accounts, their friends, etc.
+	Feel free to try some of the other commands as well by using the program as it instructs to be used when run. See the accountsSave.txt for existing accounts, their friends, etc. The presentation also demonstrates the IO at work.
