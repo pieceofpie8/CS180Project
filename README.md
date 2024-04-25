@@ -26,10 +26,13 @@ To run, type into the terminal: “java SMServerFin” to start the sever and "j
 To add a blocked user as a friend or vice versa, first remove them from friends / blocked.
 Starting a DM is a necessary operation to make sure the file saves properly. A message can be sent without starting one, but it is not recommended.
 In order for the SMClientGUIInterface test to work an isntance of SMServerFin should be running in the background.
+In the presentation there was a small issue with the password section for creating an account saying "new username." This has since been fixed in the final result.
 
 ## Submission:
 
 Submitted workspace on Vocareum by David Erb
+Submitted Report by Atharv
+Submitted Presentation by (insert here)
 
 # Classes:
 
@@ -87,7 +90,7 @@ accountsSave.txt -
 	“Name,Password,FriendsOnly(true/false):Friends:Blocked”
 
 directMessageFileNames.txt -
-	“Name1,Name2”
+	“Name1,Name2.txt”
 
 Message files - 
 	“(0) Direct Messages Started!”
